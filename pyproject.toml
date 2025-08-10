@@ -1,7 +1,30 @@
 [project]
 name = "bbdown-ui"
 version = "0.1.0"
-description = "Add your description here"
+description = "一个基于Python的UI界面封装BBDown命令方便使用"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "PyQt6>=6.0.0",
+]
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+license = {text = "MIT"}
+keywords = ["bbdown", "bilibili", "download", "ui", "pyqt6"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Video",
+]
+
+[project.scripts]
+bbdown-ui = "main:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/bbdown-ui"
+Repository = "https://github.com/yourusername/bbdown-ui"
