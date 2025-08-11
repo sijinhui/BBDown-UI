@@ -1,6 +1,6 @@
 # BBDown-UI
 
-一个基于Python的UI界面封装BBDown命令方便使用，使用PySide6封装界面，跨平台，界面现代化一点，全局使用高级的毛玻璃效果，要注意色彩搭配。
+一个基于Python的UI界面封装BBDown命令方便使用，使用PySide6封装界面。
 
 ## 功能特点
 

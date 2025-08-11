@@ -25,29 +25,19 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
 
-    - name: Activate virtual environment
-      run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          .venv\Scripts\activate
-          echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
-          echo "PATH=.venv\Scripts;$PATH" >> $GITHUB_ENV
-        else
-          source .venv/bin/activate
-          echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
-          echo "PATH=$VIRTUAL_ENV/bin:$PATH" >> $GITHUB_ENV
-        fi
-
     - name: Build macOS App
       if: matrix.os == 'macos-13'
       #env:
       #  NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka-cache
       run: |
-        #pyrcc5 -o libs/resources.py resources.qrc
+        .venv\Scripts\activate
+        echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
+        echo "PATH=.venv\Scripts;$PATH" >> $GITHUB_ENV
+        
         nuitka \
           --macos-create-app-bundle \
           --macos-app-mode=gui \
           --standalone \
-          --show-memory \
           --enable-plugin=pyside6 \
           --include-package-data=pyyaml \
           --show-progress \
@@ -57,11 +47,14 @@ jobs:
     - name: Build Windows App
       if: matrix.os == 'windows-latest'
       run: |
+        source .venv/bin/activate
+        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+        echo "PATH=$VIRTUAL_ENV/bin:$PATH" >> $GITHUB_ENV
+        
         nuitka ^
           --onefile ^
           --windows-disable-console ^
           --standalone ^
-          --show-memory ^
           --enable-plugin=pyside6 ^
           --include-package-data=pyyaml ^
           --show-progress ^
