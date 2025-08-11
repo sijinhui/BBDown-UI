@@ -51,6 +51,9 @@ class BBDownUI(QMainWindow):
         self.clipboard_timer.timeout.connect(self.check_clipboard)
         self.last_clipboard_text = ""
         self.clipboard_timer.start(1000)  # 每秒检查一次剪贴板
+
+        # 初始化一些自定义默认值
+        self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>-<pageNumberWithZero>"
         
     def create_url_input_area(self, layout):
         """创建URL输入区域"""
@@ -124,7 +127,7 @@ class BBDownUI(QMainWindow):
         file_pattern_layout = QHBoxLayout()
         file_pattern_layout.addWidget(QLabel("单P文件命名:"))
         self.file_pattern = QLineEdit()
-        self.file_pattern.setPlaceholderText("<videoTitle>")
+        self.file_pattern.setPlaceholderText("<ownerName>/<ownerName>-<videoTitle>-<bvid>-<pageNumberWithZero>")
         file_pattern_layout.addWidget(self.file_pattern)
         
         file_pattern_layout.addWidget(QLabel("多P文件命名:"))
@@ -286,6 +289,8 @@ class BBDownUI(QMainWindow):
         file_pattern = self.file_pattern.text().strip()
         if file_pattern:
             command.extend(["-F", file_pattern])
+        else:
+            command.extend(["-F", self.default_file_pattern])
             
         multi_file_pattern = self.multi_file_pattern.text().strip()
         if multi_file_pattern:
