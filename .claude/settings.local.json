@@ -6,7 +6,8 @@
       "Bash(uv pip install:*)",
       "Bash(python -m nuitka:*)",
       "Bash(uvx pyfuze:*)",
-      "Bash(uv pip list:*)"
+      "Bash(uv pip list:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }
