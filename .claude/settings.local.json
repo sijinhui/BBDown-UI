@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv sync:*)",
+      "Bash(uv pip show:*)",
+      "Bash(uv pip install:*)",
+      "Bash(python -m nuitka:*)",
+      "Bash(uvx pyfuze:*)",
+      "Bash(uv pip list:*)"
+    ],
+    "deny": []
+  }
+}
