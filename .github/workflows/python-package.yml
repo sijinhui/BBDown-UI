@@ -31,8 +31,6 @@ jobs:
       #  NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka-cache
       run: |
         source .venv/bin/activate
-        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
-        echo "PATH=$VIRTUAL_ENV/bin:$PATH" >> $GITHUB_ENV
         nuitka \
           --macos-create-app-bundle \
           --macos-app-mode=gui \
@@ -45,24 +43,13 @@ jobs:
 
     - name: Build Windows App
       if: matrix.os == 'windows-latest'
-      shell: cmd
       run: |
         .venv\Scripts\activate
-        echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
-        echo "PATH=.venv\Scripts;$PATH" >> $GITHUB_ENV
-        nuitka ^
-          --onefile ^
-          --windows-disable-console ^
-          --standalone ^
-          --enable-plugin=pyside6 ^
-          --include-package-data=pyyaml ^
-          --show-progress ^
-          --output-dir=o ^
-          main.py
+        nuitka --onefile --windows-disable-console --standalone --enable-plugin=pyside6 --include-package-data=pyyaml --show-progress --output-dir=o main.py
 
     - name: Archive the build
       uses: actions/upload-artifact@v4
       with:
-        name: AinnoLabel-${{ matrix.os }}
+        name: BBDown-UI-${{ matrix.os }}
         path: o/
 
