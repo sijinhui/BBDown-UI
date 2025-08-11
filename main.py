@@ -253,7 +253,10 @@ class BBDownUI(QMainWindow):
             QMessageBox.warning(self, "警告", "请输入视频地址或BV号")
             return None
             
-        command = ["BBDown", url]
+        # 转换新版个人空间合集链接为旧版格式
+        converted_url = self.convert_space_url(url)
+        
+        command = ["BBDown", converted_url]
         
         # 添加API模式参数
         api_mode = self.api_combo.currentText()
@@ -418,8 +421,10 @@ class BBDownUI(QMainWindow):
         self.last_clipboard_text = clipboard_text
         
         # 检查是否为B站链接或BV号
-        if self.is_bilibili_url(clipboard_text) and not self.url_input.text():
-            self.url_input.setText(clipboard_text)
+        if self.is_bilibili_url(clipboard_text):
+            # 转换新版个人空间合集链接为旧版格式
+            converted_url = self.convert_space_url(clipboard_text)
+            self.url_input.setText(converted_url)
     
     def is_bilibili_url(self, text):
         """判断文本是否为B站链接或BV号"""
@@ -429,6 +434,7 @@ class BBDownUI(QMainWindow):
         # B站链接的正则表达式（包括多种可能的URL格式）
         bilibili_patterns = [
             r'https?://(www\.)?bilibili\.com/video/BV\w+',
+            r'https://space.bilibili.com/\w+',
             r'https?://b23\.tv/\w+',
             r'^BV\w+$'
         ]
@@ -438,6 +444,28 @@ class BBDownUI(QMainWindow):
             if re.match(pattern, text):
                 return True
         return False
+        
+    def convert_space_url(self, url):
+        """将新版个人空间合集链接转换为旧版格式"""
+        # 新版个人空间合集链接格式: 
+        # https://space.bilibili.com/392959666/lists/1560264?type=season
+        # 旧版个人空间合集链接格式:
+        # https://space.bilibili.com/392959666/channel/collectiondetail?sid=1560264
+        
+        # 匹配新版个人空间合集链接
+        new_pattern = r'https://space\.bilibili\.com/(\d+)/lists/(\d+)'
+        match = re.match(new_pattern, url)
+        
+        if match:
+            uid = match.group(1)  # 用户ID
+            sid = match.group(2)  # 合集ID
+            
+            # 转换为旧版链接格式
+            old_url = f"https://space.bilibili.com/{uid}/channel/collectiondetail?sid={sid}"
+            return old_url
+        
+        # 如果不是新版个人空间合集链接，返回原链接
+        return url
         
     def load_config(self):
         """加载配置文件"""
