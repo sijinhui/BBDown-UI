@@ -3,6 +3,7 @@ import re
 import os
 import yaml
 import json
+import pathlib
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QGroupBox, QCheckBox, QComboBox,
@@ -371,10 +372,20 @@ class BBDownUI(QMainWindow):
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
         self.output_text.setFont(QFont("Monaco", 10))
+        self.output_text.textChanged.connect(self.output_text_changed)
         output_layout.addWidget(self.output_text)
         
         layout.addWidget(output_group)
-        
+
+    def output_text_changed(self,):
+        if not self.output_text.toPlainText().strip():
+            # 清空时，自动删除调试日志
+            self.clean_debug_files()
+    def clean_debug_files(self):
+        dir_path = pathlib.Path(self.work_dir.text())
+        for file_path in dir_path.glob("debug_*.json"):
+            file_path.unlink()
+
     def browse_directory(self):
         """浏览目录选择"""
         directory = QFileDialog.getExistingDirectory(self, "选择工作目录")
@@ -560,6 +571,7 @@ class BBDownUI(QMainWindow):
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""
         self.save_config()
+        self.clean_debug_files()
         event.accept()
     
     def check_clipboard(self):
