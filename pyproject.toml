@@ -5,14 +5,14 @@ description = "一个基于Python的UI界面封装BBDown命令方便使用"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "PyQt6>=6.0.0",
+    "pyside6>=6.9.1",
     "PyYAML>=6.0",
 ]
 authors = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
 license = {text = "MIT"}
-keywords = ["bbdown", "bilibili", "download", "ui", "pyqt6"]
+keywords = ["bbdown", "bilibili", "download", "ui", "pyside6"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: End Users/Desktop",
@@ -29,3 +29,8 @@ bbdown-ui = "main:main"
 [project.urls]
 Homepage = "https://github.com/sijinhui/BBDown-UI"
 Repository = "https://github.com/sijinhui/BBDown-UI"
+
+[dependency-groups]
+dev = [
+    "nuitka>=2.7.12",
+]

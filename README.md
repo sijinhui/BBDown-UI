@@ -1,6 +1,6 @@
 # BBDown-UI
 
-一个基于Python的UI界面封装BBDown命令方便使用，使用pyQT6封装界面，跨平台，界面现代化一点，全局使用高级的毛玻璃效果，要注意色彩搭配。
+一个基于Python的UI界面封装BBDown命令方便使用，使用PySide6封装界面，跨平台，界面现代化一点，全局使用高级的毛玻璃效果，要注意色彩搭配。
 
 ## 功能特点
 
@@ -16,7 +16,7 @@
 ### 环境要求
 
 - Python 3.13+
-- PyQt6
+- PySide6
 - BBDown程序（需要单独下载并配置到系统PATH中）
 
 ### 安装依赖
@@ -31,6 +31,22 @@ uv sync
 
 ```bash
 python main.py
+```
+
+### 打包说明
+
+```shell
+nuitka \
+  --macos-create-app-bundle \
+  --macos-app-mode=gui \
+  --standalone \
+  --show-memory \
+  --enable-plugin=pyside6 \
+  --include-package-data=pyyaml \
+  --show-progress \
+  --output-dir=o \
+  main.py
+
 ```
 
 ## 使用说明

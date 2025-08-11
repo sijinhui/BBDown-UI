@@ -2,13 +2,13 @@ import sys
 import re
 import os
 import yaml
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QGroupBox, QCheckBox, QComboBox,
     QTextEdit, QFileDialog, QMessageBox, QDialog, QLabel
 )
-from PyQt6.QtCore import Qt, QProcess, QTimer
-from PyQt6.QtGui import QFont, QClipboard, QPixmap
+from PySide6.QtCore import Qt, QProcess, QTimer
+from PySide6.QtGui import QFont, QClipboard, QPixmap
 
 
 class BBDownUI(QMainWindow):
@@ -235,7 +235,7 @@ class BBDownUI(QMainWindow):
         
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
-        self.output_text.setFont(QFont("Consolas", 10))
+        self.output_text.setFont(QFont("Monaco", 10))
         output_layout.addWidget(self.output_text)
         
         layout.addWidget(output_group)
