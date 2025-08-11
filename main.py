@@ -723,14 +723,7 @@ class ImageViewerDialog(QDialog):
         pixmap_width = pixmap.width()
         pixmap_height = pixmap.height()
         
-        # 计算窗口尺寸
-        if pixmap_width > screen_width or pixmap_height > screen_height:
-            # 如果图片超过屏幕尺寸，则窗口最大化
-            self.resize(screen_width, screen_height)
-        else:
-            # 否则窗口尺寸等于图片尺寸（加上一些边距）
-            self.resize(min(pixmap_width + 50, screen_width), min(pixmap_height + 100, screen_height))
-        
+        # 创建布局
         layout = QVBoxLayout(self)
         
         # 创建滚动区域用于显示大图
@@ -740,7 +733,22 @@ class ImageViewerDialog(QDialog):
         
         # 创建标签显示图片
         self.image_label = QLabel()
-        self.image_label.setPixmap(pixmap)
+        
+        # 如果图片尺寸大于屏幕尺寸，按比例缩放以显示完整图片
+        if pixmap_width > screen_width or pixmap_height > screen_height:
+            # 按比例缩放图片到屏幕大小
+            scaled_pixmap = pixmap.scaled(screen_width - 50, screen_height - 100, 
+                                        Qt.AspectRatioMode.KeepAspectRatio, 
+                                        Qt.TransformationMode.SmoothTransformation)
+            self.image_label.setPixmap(scaled_pixmap)
+            # 调整窗口大小
+            self.resize(scaled_pixmap.width() + 20, min(scaled_pixmap.height() + 100, screen_height))
+        else:
+            # 否则显示原始尺寸图片
+            self.image_label.setPixmap(pixmap)
+            # 调整窗口大小
+            self.resize(min(pixmap_width + 50, screen_width), min(pixmap_height + 100, screen_height))
+        
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         scroll_area.setWidget(self.image_label)
         
@@ -748,6 +756,18 @@ class ImageViewerDialog(QDialog):
         close_button = QPushButton("关闭")
         close_button.clicked.connect(self.close)
         layout.addWidget(close_button)
+        
+        # 添加快捷键支持 (Command+W on macOS)
+        self.setShortcut()
+        
+    def setShortcut(self):
+        """设置快捷键"""
+        try:
+            from PySide6.QtGui import QShortcut, QKeySequence
+            shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
+            shortcut.activated.connect(self.close)
+        except ImportError:
+            pass  # 如果导入失败则忽略快捷键功能
 
 
 class QRCodeDialog(QDialog):
