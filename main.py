@@ -16,6 +16,8 @@ from io import BytesIO
 
 # 导入视频信息横幅相关类
 from lib.video_info_banner import VideoInfoBanner
+# 导入输出区域管理类
+from lib.output_area import OutputArea
 
 class BBDownUI(QMainWindow):
     def __init__(self):
@@ -34,6 +36,9 @@ class BBDownUI(QMainWindow):
         # 初始化视频信息横幅管理器
         self.video_info_banner = VideoInfoBanner(self)
         
+        # 初始化输出区域管理器
+        self.output_area = OutputArea(self)
+        
         # 创建URL输入区域
         self.create_url_input_area(main_layout)
         
@@ -49,7 +54,7 @@ class BBDownUI(QMainWindow):
         self.create_action_buttons(main_layout)
         
         # 创建输出显示区域
-        self.create_output_area(main_layout)
+        self.output_area.create_output_area(main_layout)
         
         # 初始化进程
         self.process = QProcess(self)
@@ -261,27 +266,6 @@ class BBDownUI(QMainWindow):
         
         layout.addLayout(buttons_layout)
         
-    def create_output_area(self, layout):
-        """创建输出显示区域"""
-        output_group = QGroupBox("输出信息")
-        output_layout = QVBoxLayout(output_group)
-        
-        self.output_text = QTextEdit()
-        self.output_text.setReadOnly(True)
-        self.output_text.setFont(QFont("Monaco", 10))
-        self.output_text.textChanged.connect(self.output_text_changed)
-        output_layout.addWidget(self.output_text)
-        
-        layout.addWidget(output_group)
-
-    def output_text_changed(self,):
-        if not self.output_text.toPlainText().strip():
-            # 清空时，自动删除调试日志
-            self.clean_debug_files()
-    def clean_debug_files(self):
-        dir_path = pathlib.Path(self.work_dir.text())
-        for file_path in dir_path.glob("debug_*.json"):
-            file_path.unlink()
 
     def browse_directory(self):
         """浏览目录选择"""
@@ -363,8 +347,8 @@ class BBDownUI(QMainWindow):
         """开始下载"""
         command = self.build_command()
         if command:
-            self.output_text.clear()
-            self.output_text.append(f"执行命令: {' '.join(command)}")
+            self.output_area.clear_output()
+            self.output_area.append_output(f"执行命令: {' '.join(command)}")
             self.process.start(command[0], command[1:])
             self.download_button.setEnabled(False)
             
@@ -372,15 +356,15 @@ class BBDownUI(QMainWindow):
         """仅显示信息"""
         command = self.build_command(info_only=True)
         if command:
-            self.output_text.clear()
-            self.output_text.append(f"执行命令: {' '.join(command)}")
+            self.output_area.clear_output()
+            self.output_area.append_output(f"执行命令: {' '.join(command)}")
             self.process.start(command[0], command[1:])
             self.info_button.setEnabled(False)
             
     def login_account(self):
         """登录账号"""
-        self.output_text.clear()
-        self.output_text.append("执行命令: BBDown login")
+        self.output_area.clear_output()
+        self.output_area.append_output("执行命令: BBDown login")
         self.process.start("BBDown", ["login"])
         self.login_button.setEnabled(False)
         
@@ -434,7 +418,7 @@ class BBDownUI(QMainWindow):
         except UnicodeDecodeError:
             # 如果UTF-8解码失败，尝试使用系统默认编码
             output = bytes(data).decode("gbk", errors="ignore")
-        self.output_text.append(output)
+        self.output_area.append_output(output)
         
         # 检测未登录提示
         if "未登录B站账号" in output:
@@ -458,7 +442,7 @@ class BBDownUI(QMainWindow):
         self.download_button.setEnabled(True)
         self.info_button.setEnabled(True)
         self.login_button.setEnabled(True)
-        self.output_text.append("操作完成")
+        self.output_area.append_output("操作完成")
         
         # 关闭二维码弹窗（如果存在）
         if hasattr(self, 'qr_dialog') and self.qr_dialog:
@@ -467,8 +451,8 @@ class BBDownUI(QMainWindow):
     
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""
+        self.output_area.clean_debug_files()
         self.save_config()
-        self.clean_debug_files()
         event.accept()
     
     def check_clipboard(self):
