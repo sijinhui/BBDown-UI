@@ -2,6 +2,7 @@ import sys
 import re
 import os
 import yaml
+import json
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QGroupBox, QCheckBox, QComboBox,
@@ -45,6 +46,9 @@ class BBDownUI(QMainWindow):
 
         # 初始化二维码弹窗
         self.qr_dialog = None
+        # 初始化基本信息json
+        self.if_record_response = False
+        self.base_info_json = None
 
         # 初始化剪贴板监听
         self.clipboard = QApplication.clipboard()
@@ -125,6 +129,7 @@ class BBDownUI(QMainWindow):
         self.skip_subtitle = QCheckBox("跳过字幕下载")
         self.skip_cover = QCheckBox("跳过封面下载")
         self.debug = QCheckBox("输出调试日志")
+        self.debug.setChecked(True)
         self.show_all = QCheckBox("显示所有分P")
         
         more_checkboxes_layout.addWidget(self.skip_subtitle)
@@ -363,34 +368,52 @@ class BBDownUI(QMainWindow):
         else:
             # 用户选择不登录，继续当前操作
             pass
+            
+    def capture_api_response(self, text):
+        """捕获API响应信息"""
+        # 查找包含指定URL的行
+        lines = text.split('\n')
+        for i, line in enumerate(lines):
+            if "https://api.bilibili.com/x/web-interface/view" in line:
+                self.if_record_response = True
+                continue
+            keyword = "Response: "
+            if self.if_record_response and keyword in line:
+                response_line = line.strip().split(keyword)[-1]
+                try:
+                    response_json = json.loads(response_line)
+                except Exception as e:
+                    print('解析json失败')
+                else:
+                    self.base_info_json = response_json
+                    print(self.base_info_json)
+                self.if_record_response = False
+        
+    def _handle_process_output(self, data, is_stderr=False):
+        """处理进程输出的通用方法"""
+        try:
+            output = bytes(data).decode("utf-8")
+        except UnicodeDecodeError:
+            # 如果UTF-8解码失败，尝试使用系统默认编码
+            output = bytes(data).decode("gbk", errors="ignore")
+        self.output_text.append(output)
+        
+        # 检测未登录提示
+        if "未登录B站账号" in output:
+            self.handle_not_logged_in()
+            
+        # 捕捉API响应信息
+        self.capture_api_response(output)
         
     def handle_stdout(self):
         """处理标准输出"""
         data = self.process.readAllStandardOutput()
-        try:
-            stdout = bytes(data).decode("utf-8")
-        except UnicodeDecodeError:
-            # 如果UTF-8解码失败，尝试使用系统默认编码
-            stdout = bytes(data).decode("gbk", errors="ignore")
-        self.output_text.append(stdout)
-        
-        # 检测未登录提示
-        if "未登录B站账号" in stdout:
-            self.handle_not_logged_in()
+        self._handle_process_output(data)
         
     def handle_stderr(self):
         """处理错误输出"""
         data = self.process.readAllStandardError()
-        try:
-            stderr = bytes(data).decode("utf-8")
-        except UnicodeDecodeError:
-            # 如果UTF-8解码失败，尝试使用系统默认编码
-            stderr = bytes(data).decode("gbk", errors="ignore")
-        self.output_text.append(stderr)
-        
-        # 检测未登录提示
-        if "未登录B站账号" in stderr:
-            self.handle_not_logged_in()
+        self._handle_process_output(data, is_stderr=True)
         
     def process_finished(self):
         """进程结束处理"""
