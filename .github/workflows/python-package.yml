@@ -45,6 +45,7 @@ jobs:
 
     - name: Build Windows App
       if: matrix.os == 'windows-latest'
+      shell: cmd
       run: |
         .venv\Scripts\activate
         echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
