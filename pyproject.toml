@@ -26,5 +26,5 @@ classifiers = [
 bbdown-ui = "main:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/bbdown-ui"
-Repository = "https://github.com/yourusername/bbdown-ui"
+Homepage = "https://github.com/sijinhui/BBDown-UI"
+Repository = "https://github.com/sijinhui/BBDown-UI"

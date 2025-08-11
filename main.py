@@ -41,7 +41,10 @@ class BBDownUI(QMainWindow):
         self.process.readyReadStandardOutput.connect(self.handle_stdout)
         self.process.readyReadStandardError.connect(self.handle_stderr)
         self.process.finished.connect(self.process_finished)
-        
+
+        # 初始化二维码弹窗
+        self.qr_dialog = None
+
         # 初始化剪贴板监听
         self.clipboard = QApplication.clipboard()
         self.clipboard_timer = QTimer(self)
@@ -324,6 +327,25 @@ class BBDownUI(QMainWindow):
         self.qr_dialog = QRCodeDialog(self)
         self.qr_dialog.show()
         
+    def handle_not_logged_in(self):
+        """处理未登录状态"""
+        # 弹出提示框询问用户是否要登录
+        reply = QMessageBox.question(self, "未登录提示", 
+                                   "检测到您尚未登录B站账号，解析可能受到限制。是否立即登录？", 
+                                   QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            # 中断当前进程
+            if self.process and self.process.state() == QProcess.ProcessState.Running:
+                self.process.kill()
+                self.process.waitForFinished()
+            
+            # 触发登录操作
+            self.login_account()
+        else:
+            # 用户选择不登录，继续当前操作
+            pass
+        
     def handle_stdout(self):
         """处理标准输出"""
         data = self.process.readAllStandardOutput()
@@ -334,6 +356,10 @@ class BBDownUI(QMainWindow):
             stdout = bytes(data).decode("gbk", errors="ignore")
         self.output_text.append(stdout)
         
+        # 检测未登录提示
+        if "未登录B站账号" in stdout:
+            self.handle_not_logged_in()
+        
     def handle_stderr(self):
         """处理错误输出"""
         data = self.process.readAllStandardError()
@@ -343,6 +369,10 @@ class BBDownUI(QMainWindow):
             # 如果UTF-8解码失败，尝试使用系统默认编码
             stderr = bytes(data).decode("gbk", errors="ignore")
         self.output_text.append(stderr)
+        
+        # 检测未登录提示
+        if "未登录B站账号" in stderr:
+            self.handle_not_logged_in()
         
     def process_finished(self):
         """进程结束处理"""
