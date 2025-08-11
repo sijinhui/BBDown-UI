@@ -1,6 +1,7 @@
 import sys
 import re
 import os
+import yaml
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QGroupBox, QCheckBox, QComboBox,
@@ -53,7 +54,16 @@ class BBDownUI(QMainWindow):
         self.clipboard_timer.start(1000)  # 每秒检查一次剪贴板
 
         # 初始化一些自定义默认值
-        self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>-<pageNumberWithZero>"
+        self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>"
+        
+        # 初始化配置文件路径
+        self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
+        
+        # 加载配置
+        self.load_config()
+        
+        # 连接窗口关闭事件
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         
     def create_url_input_area(self, layout):
         """创建URL输入区域"""
@@ -127,7 +137,7 @@ class BBDownUI(QMainWindow):
         file_pattern_layout = QHBoxLayout()
         file_pattern_layout.addWidget(QLabel("单P文件命名:"))
         self.file_pattern = QLineEdit()
-        self.file_pattern.setPlaceholderText("<ownerName>/<ownerName>-<videoTitle>-<bvid>-<pageNumberWithZero>")
+        self.file_pattern.setPlaceholderText("<ownerName>/<ownerName>-<videoTitle>-<bvid>")
         file_pattern_layout.addWidget(self.file_pattern)
         
         file_pattern_layout.addWidget(QLabel("多P文件命名:"))
@@ -391,6 +401,11 @@ class BBDownUI(QMainWindow):
             self.qr_dialog.close()
             self.qr_dialog = None
     
+    def closeEvent(self, event):
+        """窗口关闭事件，保存配置"""
+        self.save_config()
+        event.accept()
+    
     def check_clipboard(self):
         """检查剪贴板内容，如果是B站链接则自动填充"""
         clipboard_text = self.clipboard.text()
@@ -423,6 +438,91 @@ class BBDownUI(QMainWindow):
             if re.match(pattern, text):
                 return True
         return False
+        
+    def load_config(self):
+        """加载配置文件"""
+        if os.path.exists(self.config_file):
+            try:
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    config = yaml.safe_load(f) or {}
+                
+                # 加载URL输入
+                if 'url' in config:
+                    self.url_input.setText(config['url'])
+                
+                # 加载API模式
+                if 'api_mode' in config:
+                    index = self.api_combo.findText(config['api_mode'])
+                    if index >= 0:
+                        self.api_combo.setCurrentIndex(index)
+                
+                # 加载编码优先级
+                if 'encoding' in config:
+                    self.encoding_input.setText(config['encoding'])
+                
+                # 加载画质优先级
+                if 'dfn' in config:
+                    self.dfn_input.setText(config['dfn'])
+                
+                # 加载复选框状态
+                if 'use_aria2' in config:
+                    self.use_aria2.setChecked(config['use_aria2'])
+                if 'interactive' in config:
+                    self.interactive.setChecked(config['interactive'])
+                if 'download_danmaku' in config:
+                    self.download_danmaku.setChecked(config['download_danmaku'])
+                if 'video_only' in config:
+                    self.video_only.setChecked(config['video_only'])
+                if 'audio_only' in config:
+                    self.audio_only.setChecked(config['audio_only'])
+                if 'skip_subtitle' in config:
+                    self.skip_subtitle.setChecked(config['skip_subtitle'])
+                if 'skip_cover' in config:
+                    self.skip_cover.setChecked(config['skip_cover'])
+                if 'debug' in config:
+                    self.debug.setChecked(config['debug'])
+                if 'show_all' in config:
+                    self.show_all.setChecked(config['show_all'])
+                
+                # 加载文件命名模式
+                if 'file_pattern' in config:
+                    self.file_pattern.setText(config['file_pattern'])
+                if 'multi_file_pattern' in config:
+                    self.multi_file_pattern.setText(config['multi_file_pattern'])
+                
+                # 加载工作目录
+                if 'work_dir' in config:
+                    self.work_dir.setText(config['work_dir'])
+                    
+            except Exception as e:
+                print(f"加载配置文件失败: {e}")
+    
+    def save_config(self):
+        """保存配置到文件"""
+        config = {
+            # 'url': self.url_input.text(),
+            'api_mode': self.api_combo.currentText(),
+            'encoding': self.encoding_input.text(),
+            'dfn': self.dfn_input.text(),
+            'use_aria2': self.use_aria2.isChecked(),
+            'interactive': self.interactive.isChecked(),
+            'download_danmaku': self.download_danmaku.isChecked(),
+            'video_only': self.video_only.isChecked(),
+            'audio_only': self.audio_only.isChecked(),
+            'skip_subtitle': self.skip_subtitle.isChecked(),
+            'skip_cover': self.skip_cover.isChecked(),
+            'debug': self.debug.isChecked(),
+            'show_all': self.show_all.isChecked(),
+            'file_pattern': self.file_pattern.text(),
+            'multi_file_pattern': self.multi_file_pattern.text(),
+            'work_dir': self.work_dir.text()
+        }
+        
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as f:
+                yaml.dump(config, f, allow_unicode=True, indent=2)
+        except Exception as e:
+            print(f"保存配置文件失败: {e}")
 
 
 class QRCodeDialog(QDialog):
