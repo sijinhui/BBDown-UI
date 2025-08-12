@@ -106,12 +106,19 @@ class DownloadOptionsArea:
         workdir_layout.addWidget(self.work_dir)
         
         self.browse_button = QPushButton("浏览")
-        self.browse_button.clicked.connect(self.parent.browse_directory)
+        self.browse_button.clicked.connect(self.browse_directory)
         workdir_layout.addWidget(self.browse_button)
         options_layout.addLayout(workdir_layout)
         
         layout.addWidget(options_group)
         
+    def browse_directory(self):
+        """浏览目录选择"""
+        from PySide6.QtWidgets import QFileDialog
+        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录")
+        if directory:
+            self.work_dir.setText(directory)
+            
     def load_config(self, config_file):
         """加载配置文件"""
         if os.path.exists(config_file):

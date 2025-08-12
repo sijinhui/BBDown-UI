@@ -3,6 +3,9 @@ from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
 
+from PySide6.QtWidgets import QGroupBox, QVBoxLayout, QLineEdit
+
+
 class URLHandler:
     def __init__(self, parent):
         self.parent = parent
@@ -13,6 +16,18 @@ class URLHandler:
         self.clipboard_timer = QTimer(self.parent)
         self.clipboard_timer.timeout.connect(self.check_clipboard)
         self.clipboard_timer.start(1000)  # 每秒检查一次剪贴板
+        
+    def create_url_input_area(self, layout):
+        """创建URL输入区域"""
+        url_group = QGroupBox("视频地址")
+        url_layout = QVBoxLayout(url_group)
+
+        self.parent.url_input = QLineEdit()
+        self.parent.url_input.setPlaceholderText(
+            "请输入哔哩哔哩视频地址或BV号，如：https://www.bilibili.com/video/BV1xx411c7mu 或 BV1xx411c7mu"
+        )
+        url_layout.addWidget(self.parent.url_input)
+        layout.addWidget(url_group)
 
     def is_bilibili_url(self, text):
         """判断文本是否为B站链接或BV号"""
