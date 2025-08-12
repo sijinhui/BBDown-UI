@@ -1,5 +1,6 @@
 import sys
 import os
+import pathlib
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -30,12 +31,14 @@ from lib.action_buttons import ActionButtons
 # 导入进程处理器
 from lib.process_handler import ProcessHandler
 # 导入检查器
-from lib.checker import check_bbdown_path
-
+from lib.checker import check_bbdown_path, setup_system_paths
 
 class BBDownUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        # 配置系统路径
+        setup_system_paths()
+        
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
         self.setGeometry(100, 100, 1200, 600)
 
@@ -159,9 +162,7 @@ class BBDownUI(QMainWindow):
         self.statusBar().showMessage("就绪")
 
         # 初始化配置文件路径
-        self.config_file = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "config.yaml"
-        )
+        self.config_file = str(pathlib.Path.home() / ".BBDown.yaml")
 
         # 加载配置
         self.download_options.load_config(self.config_file)

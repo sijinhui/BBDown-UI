@@ -71,3 +71,37 @@ def check_bbdown_path(window):
         # 如果用户取消了文件选择，退出程序
         if not window.command_builder.BBDown_PATH:
             sys.exit(1)
+
+
+def setup_system_paths():
+    """配置系统路径，方便在打包为app时获取类似ffmpeg等程序"""
+    import platform
+
+    # 检查操作系统类型
+    system = platform.system()
+
+    # 只在 macOS 和 Linux 上添加额外路径
+    if system in ["Darwin", "Linux"]:
+        # 添加常见的Unix-like系统二进制文件路径
+        common_paths = [
+            "/opt/homebrew/bin",
+            "/usr/local/bin",
+            "/usr/bin",
+            "/bin",
+            "/usr/sbin",
+            "/sbin"
+        ]
+
+        # 获取当前PATH环境变量
+        current_path = os.environ.get("PATH", "")
+        path_list = current_path.split(":") if current_path else []
+
+        # 添加不在当前PATH中的常见路径
+        for path in common_paths:
+            if path not in path_list and os.path.exists(path):
+                path_list.append(path)
+
+        # 更新PATH环境变量
+        os.environ["PATH"] = ":".join(path_list)
+    # Windows系统不需要特殊处理，保持原有PATH即可
+
