@@ -36,6 +36,7 @@ jobs:
           --macos-app-mode=gui \
           --standalone \
           --enable-plugin=pyside6 \
+          --follow-import-to=lib \
           --include-package-data=pyyaml \
           --show-progress \
           --output-dir=o \
