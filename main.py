@@ -183,7 +183,6 @@ class BBDownUI(QMainWindow):
 
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""
-        self.output_area.clean_debug_files()
         self.download_options.save_config(self.config_file)
         event.accept()
 

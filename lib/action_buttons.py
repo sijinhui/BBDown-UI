@@ -1,3 +1,4 @@
+from pathlib import Path
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QMessageBox
 from .qr_dialog import QRCodeDialog
 from PySide6.QtCore import QProcess
@@ -120,6 +121,17 @@ class ActionButtons:
         if hasattr(self, 'qr_dialog') and self.qr_dialog:
             self.qr_dialog.close()
             self.qr_dialog = None
+        # 清理 debug 文件
+        self.clean_debug_files()
+
+    def clean_debug_files(self):
+        """清理调试文件"""
+        if not self.parent:
+            return
+
+        dir_path = Path(self.parent.download_options.work_dir.text())
+        for file_path in dir_path.glob("debug_*.json"):
+            file_path.unlink()
             
     def handle_not_logged_in(self):
         """处理未登录状态"""
