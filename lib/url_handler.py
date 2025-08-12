@@ -27,7 +27,7 @@ class URLHandler:
             "请输入哔哩哔哩视频地址或BV号，如：https://www.bilibili.com/video/BV1xx411c7mu 或 BV1xx411c7mu"
         )
         url_layout.addWidget(self.parent.url_input)
-        layout.addWidget(url_group)
+        layout.addWidget(url_group, 1)
 
     def is_bilibili_url(self, text):
         """判断文本是否为B站链接或BV号"""
