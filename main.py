@@ -87,7 +87,8 @@ class BBDownUI(QMainWindow):
 
         # 初始化二维码弹窗
         self.qr_dialog = None
-
+        # 视频基础信息存储
+        self._base_video_info_json = None
         # 初始化一些自定义默认值
         self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>"
 
@@ -105,24 +106,13 @@ class BBDownUI(QMainWindow):
     @property
     def base_video_info_json(self):
         """获取视频基本信息"""
-        return self.process_handler.base_video_info_json
+        return self._base_video_info_json
 
     @base_video_info_json.setter
     def base_video_info_json(self, value):
         """设置基本信息，并更新对应的框"""
-        self.process_handler.base_video_info_json = value
-
-    def handle_stdout(self):
-        """处理标准输出"""
-        self.process_handler.handle_stdout()
-
-    def handle_stderr(self):
-        """处理错误输出"""
-        self.process_handler.handle_stderr()
-
-    def process_finished(self):
-        """进程结束处理"""
-        self.process_handler.process_finished()
+        self._base_video_info_json = value
+        self.video_info_banner.update_video_info(value)
 
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""

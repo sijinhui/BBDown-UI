@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QMessageBox
 from .qr_dialog import QRCodeDialog
-
+from PySide6.QtCore import QProcess
 
 
 
@@ -86,7 +86,7 @@ class ActionButtons:
         if command:
             self.parent.output_area.clear_output()
             self.parent.output_area.append_output(f"执行命令: {' '.join(command)}")
-            self.parent.process.start(command[0], command[1:])
+            self.parent.process_handler.start(command[0], command[1:])
             self.download_button.setEnabled(False)
             
     def show_info(self):
@@ -95,14 +95,14 @@ class ActionButtons:
         if command:
             self.parent.output_area.clear_output()
             self.parent.output_area.append_output(f"执行命令: {' '.join(command)}")
-            self.parent.process.start(command[0], command[1:])
+            self.parent.process_handler.process.start(command[0], command[1:])
             self.info_button.setEnabled(False)
             
     def login_account(self):
         """登录账号"""
         self.parent.output_area.clear_output()
         self.parent.output_area.append_output("执行命令: BBDown login")
-        self.parent.process.start("BBDown", ["login"])
+        self.parent.process_handler.start("BBDown", ["login"])
         self.login_button.setEnabled(False)
         
         # 显示二维码弹窗
@@ -130,9 +130,9 @@ class ActionButtons:
         
         if reply == QMessageBox.StandardButton.Yes:
             # 中断当前进程
-            if self.parent.process and self.parent.process.state() == QProcess.ProcessState.Running:
-                self.parent.process.kill()
-                self.parent.process.waitForFinished()
+            if self.parent.process and self.parent.process_handler.state() == QProcess.ProcessState.Running:
+                self.parent.process_handler.kill()
+                self.parent.process_handler.waitForFinished()
             
             # 触发登录操作
             self.login_account()

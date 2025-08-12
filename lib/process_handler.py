@@ -58,20 +58,19 @@ class ProcessHandler:
                 try:
                     response_json = json.loads(response_line)
                 except Exception as e:
-                    print("解析json失败")
+                    print("解析json失败", str(e), response_line, sep='\n')
                 else:
-                    self._base_video_info_json = response_json
+                    # self._base_video_info_json = response_json
                     self.parent.base_video_info_json = response_json
-                    # print(self.base_info_json)
                 self.if_record_response = False
 
-    @property
-    def base_video_info_json(self):
-        """获取视频基本信息"""
-        return self._base_video_info_json
-
-    @base_video_info_json.setter
-    def base_video_info_json(self, value):
-        """设置基本信息，并更新对应的框"""
-        self._base_video_info_json = value
-        self.parent.video_info_banner.update_video_info(value)
+    # @property
+    # def base_video_info_json(self):
+    #     """获取视频基本信息"""
+    #     return self._base_video_info_json
+    #
+    # @base_video_info_json.setter
+    # def base_video_info_json(self, value):
+    #     """设置基本信息，并更新对应的框"""
+    #     self._base_video_info_json = value
+    #     self.parent.video_info_banner.update_video_info(value)
