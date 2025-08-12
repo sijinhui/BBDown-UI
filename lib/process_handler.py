@@ -13,6 +13,8 @@ class ProcessHandler:
         # 初始化基本信息json
         self.if_record_response = False
         self._base_video_info_json = None
+        # 初始化JSON堆栈
+        self.json_buffer = ""
 
     def handle_stdout(self):
         """处理标准输出"""
@@ -51,26 +53,30 @@ class ProcessHandler:
         for i, line in enumerate(lines):
             if "https://api.bilibili.com/x/web-interface/view" in line:
                 self.if_record_response = True
+                # 重置JSON缓冲区
+                self.json_buffer = ""
                 continue
             keyword = "Response: "
-            if self.if_record_response and keyword in line:
+            if self.if_record_response:
+                if keyword in line:
+                    self.json_buffer = ""
                 response_line = line.strip().split(keyword)[-1]
-                try:
-                    response_json = json.loads(response_line)
-                except Exception as e:
-                    print("解析json失败", str(e), response_line, sep='\n')
-                else:
-                    # self._base_video_info_json = response_json
-                    self.parent.base_video_info_json = response_json
-                self.if_record_response = False
+                self.json_buffer += response_line
+                self.parse_response_json()
 
-    # @property
-    # def base_video_info_json(self):
-    #     """获取视频基本信息"""
-    #     return self._base_video_info_json
-    #
-    # @base_video_info_json.setter
-    # def base_video_info_json(self, value):
-    #     """设置基本信息，并更新对应的框"""
-    #     self._base_video_info_json = value
-    #     self.parent.video_info_banner.update_video_info(value)
+
+    def parse_response_json(self):
+        # 尝试解析JSON
+        try:
+            response_json = json.loads(self.json_buffer)
+        except Exception as e:
+            pass
+            # 如果解析失败，可能是JSON不完整，保持缓冲区内容供下次调用使用
+            # print("解析json失败，等待更多数据", str(e))
+            # return "failure"
+        else:
+            # 解析成功，更新视频信息并重置缓冲区
+            # self._base_video_info_json = response_json
+            self.parent.base_video_info_json = response_json
+            self.json_buffer = ""
+            self.if_record_response = False
