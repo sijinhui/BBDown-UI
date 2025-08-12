@@ -8,6 +8,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  release:
+    types: [created]
   workflow_dispatch:
 
 jobs:
@@ -48,9 +50,48 @@ jobs:
         .venv\Scripts\activate
         nuitka --onefile --windows-disable-console --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --show-progress --output-dir=o main.py
 
+    # 为 release 准备压缩包
+    - name: Prepare macOS release archive
+      if: matrix.os == 'macos-13' && github.event_name == 'release'
+      run: |
+        cd o
+        zip -r ../BBDown-UI-macOS.zip main.app/
+        cd ..
+
+    - name: Prepare Windows release archive
+      if: matrix.os == 'windows-latest' && github.event_name == 'release'
+      run: |
+        cd o
+        7z a ../BBDown-UI-Windows.zip main.exe
+        cd ..
+
+    # 上传到 release
+    - name: Upload macOS release asset
+      if: matrix.os == 'macos-13' && github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./BBDown-UI-macOS.zip
+        asset_name: BBDown-UI-macOS.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows release asset
+      if: matrix.os == 'windows-latest' && github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./BBDown-UI-Windows.zip
+        asset_name: BBDown-UI-Windows.zip
+        asset_content_type: application/zip
+
+    # 保持原有的 artifact 上传（用于非 release 构建）
     - name: Archive the build
+      if: github.event_name != 'release'
       uses: actions/upload-artifact@v4
       with:
         name: BBDown-UI-${{ matrix.os }}
         path: o/
-
