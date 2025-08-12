@@ -46,21 +46,17 @@ class BBDownUI(QMainWindow):
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(12, 12, 12, 12)
 
-        # 创建垂直分割器（主分割器）
-        main_splitter = QSplitter(Qt.Orientation.Vertical)
-        main_layout.addWidget(main_splitter)
-
         # 创建上部区域（输入区+信息卡）
         top_widget = QWidget()
-        main_splitter.addWidget(top_widget)
+        main_layout.addWidget(top_widget)
 
         # 创建下部工作区域
         work_widget = QWidget()
-        main_splitter.addWidget(work_widget)
+        main_layout.addWidget(work_widget)
 
         # 创建上部区域布局
         top_layout = QVBoxLayout(top_widget)
-        top_layout.setSpacing(8)
+        top_layout.setSpacing(0)
         top_layout.setContentsMargins(0, 0, 0, 0)
 
         # 创建工作区域布局
@@ -128,6 +124,7 @@ class BBDownUI(QMainWindow):
 
         # 创建视频信息横幅区域（用QGroupBox包装）
         video_info_group = QGroupBox()
+        # video_info_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         top_layout.addWidget(video_info_group)
         
         # 创建视频信息布局
@@ -135,7 +132,7 @@ class BBDownUI(QMainWindow):
         video_info_layout.setSpacing(6)
         video_info_layout.setContentsMargins(6, 6, 6, 6)
         self.video_info_banner.create_video_info_banner(video_info_layout)
-        
+
         # 用于下载封面图片
         self.net_manager = QNetworkAccessManager(self)  # 必须保存为成员变量，防止被回收
 
@@ -160,7 +157,6 @@ class BBDownUI(QMainWindow):
         self.output_area.create_output_area(output_layout)
 
         # 设置分割器的初始大小
-        main_splitter.setSizes([200, 400])
         work_splitter.setSizes([300, 500])
 
         # 初始化二维码弹窗

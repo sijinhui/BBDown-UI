@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtNetwork import QNetworkRequest
 from PySide6.QtGui import QPixmap
@@ -80,8 +80,6 @@ class VideoInfoBanner:
         video_text_layout.addWidget(self.video_desc_label)
         video_info_layout.addLayout(video_text_layout)
         
-        # 初始隐藏横幅
-        self.video_info_group.setVisible(True)
         layout.addWidget(self.video_info_group)
         
     def update_video_info(self, value):
