@@ -1,9 +1,11 @@
+import shutil
 from PySide6.QtWidgets import QMessageBox
 
 
 class CommandBuilder:
     def __init__(self, parent):
         self.parent = parent
+        self.BBDown_PATH = shutil.which("BBDown")
 
     def build_command(self, info_only=False):
         """构建BBDown命令"""
@@ -14,8 +16,8 @@ class CommandBuilder:
             
         # 转换新版个人空间合集链接为旧版格式
         converted_url = self.parent.url_handler.convert_space_url(url)
-        
-        command = ["BBDown", converted_url]
+
+        command = [self.BBDown_PATH, converted_url]
         
         # 添加API模式参数
         api_mode = self.parent.download_options.api_combo.currentText()

@@ -29,6 +29,8 @@ from lib.url_handler import URLHandler
 from lib.action_buttons import ActionButtons
 # 导入进程处理器
 from lib.process_handler import ProcessHandler
+# 导入检查器
+from lib.checker import check_bbdown_path
 
 
 class BBDownUI(QMainWindow):
@@ -188,6 +190,8 @@ class BBDownUI(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     window = BBDownUI()
+    # 检查BBDown路径
+    check_bbdown_path(window)
     window.show()
     sys.exit(app.exec())
 

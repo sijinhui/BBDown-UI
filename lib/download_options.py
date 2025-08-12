@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 
 class DownloadOptionsArea:
     def __init__(self, parent):
+        self.BBDown_PATH = ""
         self.parent = parent
         # 初始化所有需要的控件属性
         self.api_combo = None
@@ -176,6 +177,10 @@ class DownloadOptionsArea:
                 # 加载工作目录
                 if 'work_dir' in config:
                     self.work_dir.setText(config['work_dir'])
+
+                # 程序路径
+                if 'BBDown_PATH' in config:
+                    self.BBDown_PATH = config.get("BBDown_PATH", "")
                     
             except Exception as e:
                 print(f"加载配置文件失败: {e}")
@@ -198,7 +203,8 @@ class DownloadOptionsArea:
             'show_all': self.show_all.isChecked(),
             'file_pattern': self.file_pattern.text(),
             'multi_file_pattern': self.multi_file_pattern.text(),
-            'work_dir': self.work_dir.text()
+            'work_dir': self.work_dir.text(),
+            'BBDown_PATH': self.BBDown_PATH,
         }
         
         try:
