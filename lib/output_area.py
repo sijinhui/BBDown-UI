@@ -36,7 +36,7 @@ class OutputArea:
         if not self.parent:
             return
             
-        dir_path = pathlib.Path(self.parent.work_dir.text())
+        dir_path = pathlib.Path(self.parent.download_options.work_dir.text())
         for file_path in dir_path.glob("debug_*.json"):
             file_path.unlink()
             

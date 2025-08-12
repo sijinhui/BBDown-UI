@@ -7,7 +7,8 @@
       "Bash(python -m nuitka:*)",
       "Bash(uvx pyfuze:*)",
       "Bash(uv pip list:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(python:*)"
     ],
     "deny": []
   }

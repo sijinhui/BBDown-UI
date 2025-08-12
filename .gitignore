@@ -10,7 +10,7 @@ nuitka-crash-report.xml
 
 # Virtual environments
 .venv
-
+.DS_Store
 
 .idea/
 
