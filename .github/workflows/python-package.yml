@@ -16,7 +16,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-13, windows-latest]
+        os: [macos-14, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
       run: uv sync --locked --all-extras --dev
 
     - name: Build macOS App
-      if: matrix.os == 'macos-13'
+      if: matrix.os == 'macos-14'
       #env:
       #  NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka-cache
       run: |
@@ -52,7 +52,7 @@ jobs:
 
     # 为 release 准备压缩包
     - name: Prepare macOS release archive
-      if: matrix.os == 'macos-13' && github.event_name == 'release'
+      if: matrix.os == 'macos-14' && github.event_name == 'release'
       run: |
         cd o
         zip -r ../BBDown-UI-macOS.zip main.app/
@@ -67,7 +67,7 @@ jobs:
 
     # 上传到 release
     - name: Upload macOS release asset
-      if: matrix.os == 'macos-13' && github.event_name == 'release'
+      if: matrix.os == 'macos-14' && github.event_name == 'release'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
