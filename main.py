@@ -5,30 +5,24 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
     QVBoxLayout,
-    QLabel,
-    QFileDialog,
+    QHBoxLayout,
+    QSizePolicy,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtNetwork import QNetworkAccessManager
 
 # 导入视频信息横幅相关类
 from lib.video_info_banner import VideoInfoBanner
-
 # 导入输出区域管理类
 from lib.output_area import OutputArea
-
 # 导入下载选项区域管理类
 from lib.download_options import DownloadOptionsArea
-
 # 导入命令构建器
 from lib.command_builder import CommandBuilder
-
 # 导入URL处理器
 from lib.url_handler import URLHandler
-
 # 导入执行按钮区域管理类
 from lib.action_buttons import ActionButtons
-
 # 导入进程处理器
 from lib.process_handler import ProcessHandler
 
@@ -37,7 +31,7 @@ class BBDownUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1200, 600)
 
         # 创建中心部件
         central_widget = QWidget()
@@ -46,6 +40,29 @@ class BBDownUI(QMainWindow):
         # 创建主布局
         main_layout = QVBoxLayout(central_widget)
         main_layout.setSpacing(10)
+
+        # 创建顶部区域
+        top_widget = QWidget()
+        top_layout = QVBoxLayout(top_widget)
+        top_layout.setSpacing(10)
+
+        # 创建下方区域
+        bottom_widget = QWidget()
+        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout.setSpacing(10)
+
+        # 创建左侧区域（下载选项）
+        left_widget = QWidget()
+        left_layout = QVBoxLayout(left_widget)
+        left_layout.setSpacing(10)
+        left_widget.setFixedHeight(250)
+        left_widget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+
+        # 创建右侧区域（执行按钮与输出信息）
+        right_widget = QWidget()
+        right_layout = QVBoxLayout(right_widget)
+        right_layout.setSpacing(10)
+        right_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         # 初始化视频信息横幅管理器
         self.video_info_banner = VideoInfoBanner(self)
@@ -69,21 +86,27 @@ class BBDownUI(QMainWindow):
         self.process_handler = ProcessHandler(self)
 
         # 创建URL输入区域
-        self.url_handler.create_url_input_area(main_layout)
+        self.url_handler.create_url_input_area(top_layout)
 
         # 创建视频信息横幅区域
-        self.video_info_banner.create_video_info_banner(main_layout)
+        self.video_info_banner.create_video_info_banner(top_layout)
         # 用于下载封面图片
         self.net_manager = QNetworkAccessManager(self)  # 必须保存为成员变量，防止被回收
 
         # 创建下载选项区域
-        self.download_options.create_download_options_area(main_layout)
+        self.download_options.create_download_options_area(left_layout)
 
         # 创建执行按钮区域
-        self.action_buttons.create_action_buttons(main_layout)
+        self.action_buttons.create_action_buttons(right_layout)
 
         # 创建输出显示区域
-        self.output_area.create_output_area(main_layout)
+        self.output_area.create_output_area(right_layout)
+
+        # 将各区域添加到主布局中
+        main_layout.addWidget(top_widget)
+        bottom_layout.addWidget(left_widget)
+        bottom_layout.addWidget(right_widget)
+        main_layout.addWidget(bottom_widget)
 
         # 初始化二维码弹窗
         self.qr_dialog = None

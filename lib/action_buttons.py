@@ -86,7 +86,7 @@ class ActionButtons:
         if command:
             self.parent.output_area.clear_output()
             self.parent.output_area.append_output(f"执行命令: {' '.join(command)}")
-            self.parent.process_handler.start(command[0], command[1:])
+            self.parent.process_handler.process.start(command[0], command[1:])
             self.download_button.setEnabled(False)
             
     def show_info(self):
