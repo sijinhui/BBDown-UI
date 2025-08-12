@@ -46,7 +46,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         .venv\Scripts\activate
-        nuitka --onefile --windows-disable-console --standalone --enable-plugin=pyside6 --include-package-data=pyyaml --show-progress --output-dir=o main.py
+        nuitka --onefile --windows-disable-console --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --show-progress --output-dir=o main.py
 
     - name: Archive the build
       uses: actions/upload-artifact@v4
