@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLayout
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtNetwork import QNetworkRequest
 from PySide6.QtGui import QPixmap
@@ -56,30 +56,36 @@ class VideoInfoBanner:
     def create_video_info_banner(self, layout):
         """创建视频信息横幅区域"""
         self.video_info_group = QGroupBox("视频信息")
+        self.video_info_group.setFixedHeight(120)  # 设置固定高度
         video_info_layout = QHBoxLayout(self.video_info_group)
         
         # 视频封面
+        video_cover_layout = QVBoxLayout()
         self.video_cover_label = QLabel()
         self.video_cover_label.setFixedSize(120, 80)
         self.video_cover_label.setStyleSheet("background-color: transparent; border: none;")
         self.video_cover_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.video_cover_label.setText("封面")
-        video_info_layout.addWidget(self.video_cover_label)
-        
+        video_cover_layout.addWidget(self.video_cover_label)
+        video_cover_layout.addStretch()
+        video_info_layout.addLayout(video_cover_layout)
+
         # 视频信息
         video_text_layout = QVBoxLayout()
+        video_text_layout.setSpacing(12)  # 设置固定间距
+
         self.video_title_label = QLabel("标题: ")
         self.video_author_label = QLabel("作者: ")
         self.video_desc_label = ElidedLabel("描述: ")
         self.video_title_label.setWordWrap(True)
         self.video_author_label.setWordWrap(True)
-        # ElidedLabel已经设置了WordWrap
-        
+
         video_text_layout.addWidget(self.video_title_label)
         video_text_layout.addWidget(self.video_author_label)
         video_text_layout.addWidget(self.video_desc_label)
+        video_text_layout.addStretch()
         video_info_layout.addLayout(video_text_layout)
-        
+
         layout.addWidget(self.video_info_group)
         
     def update_video_info(self, value):

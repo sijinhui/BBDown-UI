@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QSplitter,
     QGroupBox,
     QFormLayout,
-    QScrollArea,
+    QScrollArea, QLayout,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtNetwork import QNetworkAccessManager
@@ -56,7 +56,8 @@ class BBDownUI(QMainWindow):
 
         # 创建上部区域布局
         top_layout = QVBoxLayout(top_widget)
-        top_layout.setSpacing(0)
+        top_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
+        top_layout.setSpacing(8)
         top_layout.setContentsMargins(0, 0, 0, 0)
 
         # 创建工作区域布局
@@ -69,11 +70,10 @@ class BBDownUI(QMainWindow):
         work_layout.addWidget(work_splitter)
 
         # 创建左侧区域（下载选项）
-        left_widget = QScrollArea()
-        left_widget.setWidgetResizable(True)
+        # left_widget = QScrollArea()
+        # left_widget.setWidgetResizable(True)
         left_content = QWidget()
-        left_widget.setWidget(left_content)
-        work_splitter.addWidget(left_widget)
+        work_splitter.addWidget(left_content)
 
         # 创建右侧区域（输出日志）
         right_widget = QScrollArea()
@@ -84,6 +84,7 @@ class BBDownUI(QMainWindow):
 
         # 创建左侧区域布局
         left_layout = QVBoxLayout(left_content)
+        left_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         left_layout.setSpacing(8)
         left_layout.setContentsMargins(6, 6, 6, 6)
 
@@ -121,30 +122,16 @@ class BBDownUI(QMainWindow):
         # 创建执行按钮区域
         self.action_buttons.create_action_buttons(url_layout)
         top_layout.addLayout(url_layout)
-
-        # 创建视频信息横幅区域（用QGroupBox包装）
-        video_info_group = QGroupBox()
-        # video_info_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        top_layout.addWidget(video_info_group)
         
         # 创建视频信息布局
-        video_info_layout = QVBoxLayout(video_info_group)
-        video_info_layout.setSpacing(6)
-        video_info_layout.setContentsMargins(6, 6, 6, 6)
-        self.video_info_banner.create_video_info_banner(video_info_layout)
+        self.video_info_banner.create_video_info_banner(top_layout)
 
         # 用于下载封面图片
         self.net_manager = QNetworkAccessManager(self)  # 必须保存为成员变量，防止被回收
 
-        # 创建下载选项区域（使用QFormLayout）
-        download_options_group = QGroupBox()
-        left_layout.addWidget(download_options_group)
-        
-        # 创建下载选项布局
-        download_options_layout = QFormLayout(download_options_group)
-        download_options_layout.setSpacing(8)
-        download_options_layout.setContentsMargins(6, 6, 6, 6)
-        self.download_options.create_download_options_area(download_options_layout)
+        # 创建下载选项区域
+        self.download_options.create_download_options_area(left_layout)
+        left_layout.addStretch()
 
         # 创建输出显示区域（使用QGroupBox包装）
         output_group = QGroupBox()

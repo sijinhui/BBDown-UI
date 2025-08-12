@@ -1,7 +1,7 @@
 import os
 import yaml
 from PySide6.QtWidgets import (
-    QGroupBox, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton
+    QGroupBox, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton, QLayout
 )
 from PySide6.QtCore import Qt
 
@@ -30,6 +30,7 @@ class DownloadOptionsArea:
     def create_download_options_area(self, layout):
         """创建下载选项区域"""
         options_group = QGroupBox("下载选项")
+        # options_group.setFixedHeight(120)
         options_layout = QVBoxLayout(options_group)
         
         # API模式选择
@@ -109,7 +110,9 @@ class DownloadOptionsArea:
         self.browse_button.clicked.connect(self.browse_directory)
         workdir_layout.addWidget(self.browse_button)
         options_layout.addLayout(workdir_layout)
-        
+
+        # options_layout.addStretch()
+        options_layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         layout.addWidget(options_group)
         
     def browse_directory(self):
