@@ -8,7 +8,8 @@
       "Bash(uvx pyfuze:*)",
       "Bash(uv pip list:*)",
       "Bash(sed:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

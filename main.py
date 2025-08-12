@@ -1,17 +1,14 @@
 import sys
-import re
 import os
 import json
-import pathlib
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QGroupBox,
-    QTextEdit, QFileDialog, QMessageBox, QDialog, QScrollArea
+    QFileDialog, QMessageBox, QDialog
 )
-from PySide6.QtCore import Qt, QProcess, QTimer, QUrl, Slot
-from PySide6.QtGui import QFont, QClipboard, QPixmap, QPainter
-from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from io import BytesIO
+from PySide6.QtCore import Qt, QProcess, QTimer
+from PySide6.QtGui import QPixmap
+from PySide6.QtNetwork import QNetworkAccessManager
 
 # 导入视频信息横幅相关类
 from lib.video_info_banner import VideoInfoBanner
@@ -21,6 +18,8 @@ from lib.output_area import OutputArea
 from lib.download_options import DownloadOptionsArea
 # 导入命令构建器
 from lib.command_builder import CommandBuilder
+# 导入URL处理器
+from lib.url_handler import URLHandler
 
 class BBDownUI(QMainWindow):
     def __init__(self):
@@ -47,6 +46,9 @@ class BBDownUI(QMainWindow):
         
         # 初始化命令构建器
         self.command_builder = CommandBuilder(self)
+        
+        # 初始化URL处理器
+        self.url_handler = URLHandler(self)
         
         # 创建URL输入区域
         self.create_url_input_area(main_layout)
@@ -77,13 +79,6 @@ class BBDownUI(QMainWindow):
         self.if_record_response = False
         self._base_video_info_json = None
 
-        # 初始化剪贴板监听
-        self.clipboard = QApplication.clipboard()
-        self.clipboard_timer = QTimer(self)
-        self.clipboard_timer.timeout.connect(self.check_clipboard)
-        self.last_clipboard_text = ""
-        self.clipboard_timer.start(1000)  # 每秒检查一次剪贴板
-
         # 初始化一些自定义默认值
         self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>"
         
@@ -91,7 +86,7 @@ class BBDownUI(QMainWindow):
         self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
         
         # 加载配置
-        self.command_builder.load_config()
+        self.download_options.load_config(self.config_file)
         
         # 连接窗口关闭事件
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
@@ -308,67 +303,12 @@ class BBDownUI(QMainWindow):
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""
         self.output_area.clean_debug_files()
-        self.command_builder.save_config()
+        self.download_options.save_config(self.config_file)
         event.accept()
     
-    def check_clipboard(self):
-        """检查剪贴板内容，如果是B站链接则自动填充"""
-        clipboard_text = self.clipboard.text()
         
-        # 如果剪贴板内容没有变化，则不处理
-        if clipboard_text == self.last_clipboard_text:
-            return
             
-        # 更新上次剪贴板内容
-        self.last_clipboard_text = clipboard_text
-        
-        # 检查是否为B站链接或BV号
-        if self.is_bilibili_url(clipboard_text):
-            # 转换新版个人空间合集链接为旧版格式
-            converted_url = self.convert_space_url(clipboard_text)
-            self.url_input.setText(converted_url)
-    
-    def is_bilibili_url(self, text):
-        """判断文本是否为B站链接或BV号"""
-        if not text:
-            return False
             
-        # B站链接的正则表达式（包括多种可能的URL格式）
-        bilibili_patterns = [
-            r'https?://(www\.)?bilibili\.com/video/BV\w+',
-            r'https://space.bilibili.com/\w+',
-            r'https?://b23\.tv/\w+',
-            r'^BV\w+$'
-        ]
-        
-        # 检查是否匹配B站链接或BV号格式
-        for pattern in bilibili_patterns:
-            if re.match(pattern, text):
-                return True
-        return False
-        
-    def convert_space_url(self, url):
-        """将新版个人空间合集链接转换为旧版格式"""
-        # 新版个人空间合集链接格式: 
-        # https://space.bilibili.com/392959666/lists/1560264?type=season
-        # 旧版个人空间合集链接格式:
-        # https://space.bilibili.com/392959666/channel/collectiondetail?sid=1560264
-        
-        # 匹配新版个人空间合集链接
-        new_pattern = r'https://space\.bilibili\.com/(\d+)/lists/(\d+)'
-        match = re.match(new_pattern, url)
-        
-        if match:
-            uid = match.group(1)  # 用户ID
-            sid = match.group(2)  # 合集ID
-            
-            # 转换为旧版链接格式
-            old_url = f"https://space.bilibili.com/{uid}/channel/collectiondetail?sid={sid}"
-            return old_url
-        
-        # 如果不是新版个人空间合集链接，返回原链接
-        return url
-        
     
 
 class QRCodeDialog(QDialog):
