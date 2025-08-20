@@ -27,6 +27,15 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
 
+    # Cache Nuitka build cache
+    - name: Cache Nuitka
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/Nuitka
+        key: nuitka-cache-${{ matrix.os }}-${{ hashFiles('**/main.py', '**/lib/**') }}
+      env:
+        NUITKA_CACHE_DIR: ~/.cache/Nuitka
+
     - name: Build macOS App
       if: matrix.os == 'macos-14'
       #env:
@@ -59,13 +68,13 @@ jobs:
         zip -r ../BBDown-UI-macOS.zip main.app/
         cd ..
 
-    - name: Prepare Windows release archive
-      if: matrix.os == 'windows-latest'
-      run: |
-        cd o
-        # Nuitka on Windows creates main.exe when building with --onefile
-        7z a ../BBDown-UI-Windows.zip main.exe
-        cd ..
+#    - name: Prepare Windows release archive
+#      if: matrix.os == 'windows-latest'
+#      run: |
+#        cd o
+#        # Nuitka on Windows creates main.exe when building with --onefile
+#        7z a ../BBDown-UI-Windows.zip main.exe
+#        cd ..
 
     # 上传到 release
     - name: Upload macOS release asset
@@ -86,9 +95,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./BBDown-UI-Windows.zip
-        asset_name: BBDown-UI-Windows.zip
-        asset_content_type: application/zip
+        asset_path: ./o/main.exe
+        asset_name: BBDown-UI-Windows.exe
+        asset_content_type: application/octet-stream
 
     # 保持原有的 artifact 上传（用于非 release 构建）
     - name: Archive the build
@@ -96,4 +105,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: BBDown-UI-${{ matrix.os }}
-        path: BBDown-UI-${{ matrix.os }}.zip
+        path: |
+          ./BBDown-UI-macOS.zip
+          ./o/main.exe
