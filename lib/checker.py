@@ -1,5 +1,7 @@
 import sys
 import os
+from pathlib import Path
+
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QFileDialog, QMessageBox, QLineEdit, QHBoxLayout
 
 
@@ -84,6 +86,7 @@ def setup_system_paths():
     if system in ["Darwin", "Linux"]:
         # 添加常见的Unix-like系统二进制文件路径
         common_paths = [
+            "~/.local/bin",
             "/opt/homebrew/bin",
             "/usr/local/bin",
             "/usr/bin",
@@ -98,8 +101,9 @@ def setup_system_paths():
 
         # 添加不在当前PATH中的常见路径
         for path in common_paths:
-            if path not in path_list and os.path.exists(path):
-                path_list.append(path)
+            p = str(Path(path).expanduser().resolve())
+            if p not in path_list and os.path.exists(p):
+                path_list.append(p)
 
         # 更新PATH环境变量
         os.environ["PATH"] = ":".join(path_list)
