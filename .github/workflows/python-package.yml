@@ -52,14 +52,14 @@ jobs:
 
     # 为 release 准备压缩包
     - name: Prepare macOS release archive
-      if: matrix.os == 'macos-14' && github.event_name == 'release'
+      if: matrix.os == 'macos-14'
       run: |
         cd o
         zip -r ../BBDown-UI-macOS.zip main.app/
         cd ..
 
     - name: Prepare Windows release archive
-      if: matrix.os == 'windows-latest' && github.event_name == 'release'
+      if: matrix.os == 'windows-latest'
       run: |
         cd o
         # Nuitka on Windows creates main.exe when building with --onefile
@@ -95,4 +95,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: BBDown-UI-${{ matrix.os }}
-        path: o/
+        path: BBDown-UI-${{ matrix.os }}.zip
