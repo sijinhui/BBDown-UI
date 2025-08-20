@@ -3,7 +3,7 @@ name = "bbdown-ui"
 version = "0.1.0"
 description = "一个基于Python的UI界面封装BBDown命令方便使用"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "pyside6>=6.9.1",
     "PyYAML>=6.0",

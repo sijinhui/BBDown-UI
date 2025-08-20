@@ -42,13 +42,14 @@ jobs:
           --include-package-data=pyyaml \
           --show-progress \
           --output-dir=o \
+          --assume-yes-for-downloads \
           main.py
 
     - name: Build Windows App
       if: matrix.os == 'windows-latest'
       run: |
         .venv\Scripts\activate
-        nuitka --onefile --windows-disable-console --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --show-progress --output-dir=o main.py
+        nuitka --onefile --windows-console-mode=disable --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --show-progress --output-dir=o --assume-yes-for-downloads main.py
 
     # 为 release 准备压缩包
     - name: Prepare macOS release archive
