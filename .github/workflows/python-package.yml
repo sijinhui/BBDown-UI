@@ -31,15 +31,11 @@ jobs:
     - name: Cache Nuitka
       uses: actions/cache@v4
       with:
-        path: ~/.cache/Nuitka
+        path: o/
         key: nuitka-cache-${{ matrix.os }}-${{ hashFiles('**/main.py', '**/lib/**') }}
-      env:
-        NUITKA_CACHE_DIR: ~/.cache/Nuitka
 
     - name: Build macOS App
       if: matrix.os == 'macos-14'
-      #env:
-      #  NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka-cache
       run: |
         source .venv/bin/activate
         nuitka \
