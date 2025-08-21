@@ -103,7 +103,7 @@ class ActionButtons:
         """登录账号"""
         self.parent.output_area.clear_output()
         self.parent.output_area.append_output("执行命令: BBDown login")
-        self.parent.process_handler.start("BBDown", ["login"])
+        self.parent.process_handler.process.start("BBDown", ["login"])
         self.login_button.setEnabled(False)
         
         # 显示二维码弹窗
