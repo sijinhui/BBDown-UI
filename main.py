@@ -50,6 +50,16 @@ class BBDownUI(QMainWindow):
         self.setGeometry(100, 100, 1200, 600)
         self.setWindowIcon(QIcon(":/bilibili.ico"))
 
+        # 初始化下载模式
+        self._mode = "bilibili" # "youtube"
+        # 初始化二维码弹窗
+        self.qr_dialog = None
+        # 视频基础信息存储
+        self._base_video_info_json = None
+        # 初始化一些自定义默认值
+        self.default_bilibili_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>"
+        self.default_youtube_file_pattern = "%(uploader)s/%(title)s [%(id)s].%(ext)s"
+
         # 创建中心部件
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -164,15 +174,6 @@ class BBDownUI(QMainWindow):
 
         # 设置分割器的初始大小
         work_splitter.setSizes([300, 500])
-
-        # 初始化下载模式
-        self._mode = "bilibili" # "youtube"
-        # 初始化二维码弹窗
-        self.qr_dialog = None
-        # 视频基础信息存储
-        self._base_video_info_json = None
-        # 初始化一些自定义默认值
-        self.default_file_pattern = "<ownerName>/<ownerName>-<videoTitle>-<bvid>"
         
         # 创建状态栏
         self.statusBar().showMessage("就绪")

@@ -89,7 +89,8 @@ class YouTubeOptionsArea:
         file_pattern_layout = QHBoxLayout()
         file_pattern_layout.addWidget(QLabel("文件命名:"))
         self.file_pattern = QLineEdit()
-        self.file_pattern.setPlaceholderText("%(title)s-%(id)s.%(ext)s")
+        self.file_pattern.setPlaceholderText(self.parent.default_youtube_file_pattern)
+
         file_pattern_layout.addWidget(self.file_pattern)
         options_layout.addLayout(file_pattern_layout)
         

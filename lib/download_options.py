@@ -96,7 +96,7 @@ class DownloadOptionsArea:
         
         file_pattern_layout.addWidget(QLabel("多P文件命名:"))
         self.multi_file_pattern = QLineEdit()
-        self.multi_file_pattern.setPlaceholderText("<videoTitle>/[P<pageNumberWithZero>]<pageTitle>")
+        self.multi_file_pattern.setPlaceholderText(self.parent.default_bilibili_file_pattern)
         file_pattern_layout.addWidget(self.multi_file_pattern)
         options_layout.addLayout(file_pattern_layout)
         
