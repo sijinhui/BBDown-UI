@@ -44,7 +44,10 @@ class ProcessHandler:
             self.parent.action_buttons.handle_not_logged_in()
 
         # 捕捉API响应信息
-        self.capture_api_response(output)
+        if self.parent.mode == "bilibili":
+            self.capture_api_response(output)
+        if self.parent.mode == "youtube":
+            self.capture_youtube_response(output)
 
     def capture_api_response(self, text):
         """捕获API响应信息"""
@@ -64,9 +67,20 @@ class ProcessHandler:
                 self.json_buffer += response_line
                 self.parse_response_json()
 
+    def capture_youtube_response(self, text):
+        lines = text.split('\n')
+        for i, line in enumerate(lines):
+            if line.startswith("{"):
+                self.json_buffer = line
+                self.if_record_response = True
+                continue
+            self.json_buffer += line
+            self.parse_response_json()
+
 
     def parse_response_json(self):
         # 尝试解析JSON
+
         try:
             response_json = json.loads(self.json_buffer)
         except Exception as e:

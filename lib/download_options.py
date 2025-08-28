@@ -30,9 +30,9 @@ class DownloadOptionsArea:
 
     def create_download_options_area(self, layout):
         """创建下载选项区域"""
-        options_group = QGroupBox("下载选项")
+        self.options_group = QGroupBox("下载选项")
         # options_group.setFixedHeight(120)
-        options_layout = QVBoxLayout(options_group)
+        options_layout = QVBoxLayout(self.options_group)
         
         # API模式选择
         api_layout = QHBoxLayout()
@@ -114,7 +114,7 @@ class DownloadOptionsArea:
 
         # options_layout.addStretch()
         options_layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
-        layout.addWidget(options_group)
+        layout.addWidget(self.options_group)
         
     def browse_directory(self):
         """浏览目录选择"""
@@ -128,8 +128,8 @@ class DownloadOptionsArea:
         if os.path.exists(config_file):
             try:
                 with open(config_file, 'r', encoding='utf-8') as f:
-                    config = yaml.safe_load(f) or {}
-                
+                    all_config = yaml.safe_load(f) or {}
+                config = all_config.get('bilibili', {})
                 # 加载URL输入
                 if 'url' in config:
                     self.parent.url_input.setText(config['url'])
@@ -208,7 +208,13 @@ class DownloadOptionsArea:
         }
         
         try:
+            try:
+                with open(config_file, 'r', encoding='utf-8') as f:
+                    all_config = yaml.safe_load(f) or {}
+            except Exception as e:
+                all_config = {}
+            all_config['bilibili'] = config
             with open(config_file, 'w', encoding='utf-8') as f:
-                yaml.dump(config, f, allow_unicode=True, indent=2)
+                yaml.dump(all_config, f, allow_unicode=True, indent=2)
         except Exception as e:
             print(f"保存配置文件失败: {e}")

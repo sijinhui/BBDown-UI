@@ -47,6 +47,18 @@ class URLHandler:
             if re.match(pattern, text):
                 return True
         return False
+
+    def is_youtube_url(self, text):
+        if not text:
+            return False
+        youtube_patterns = [
+            r'https?://(?:www\.)?youtube\.com/watch\?v=[\w-]+',
+        ]
+        # 检查是否匹配
+        for pattern in youtube_patterns:
+            if re.match(pattern, text):
+                return True
+        return False
         
     def convert_space_url(self, url):
         """将新版个人空间合集链接转换为旧版格式"""
@@ -83,11 +95,21 @@ class URLHandler:
         
         # 检查是否为B站链接或BV号
         if self.is_bilibili_url(clipboard_text):
+            self.parent.mode = "bilibili"
             # 转换新版个人空间合集链接为旧版格式
             converted_url = self.convert_space_url(clipboard_text)
             self.parent.url_input.setText(converted_url)
             
             # 将主窗口置于前台并激活
+            self.parent.show()
+            self.parent.raise_()
+            self.parent.activateWindow()
+
+        # 检查是否是youtube视频
+        if self.is_youtube_url(clipboard_text):
+            self.parent.mode = "youtube"
+            self.parent.url_input.setText(clipboard_text)
+
             self.parent.show()
             self.parent.raise_()
             self.parent.activateWindow()
