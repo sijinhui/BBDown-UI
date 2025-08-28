@@ -9,7 +9,9 @@
       "Bash(uv pip list:*)",
       "Bash(sed:*)",
       "Bash(python:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebSearch",
+      "Bash(yt-dlp:*)"
     ],
     "deny": []
   }

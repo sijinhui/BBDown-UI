@@ -83,24 +83,43 @@ class ActionButtons:
         
     def start_download(self):
         """开始下载"""
-        command = self.parent.command_builder.build_command()
+        # 根据模式选择命令构建器
+        if self.parent.mode == "youtube":
+            command = self.parent.youtube_command_builder.build_command()
+        else:
+            command = self.parent.command_builder.build_command()
+            
         if command:
             self.parent.output_area.clear_output()
             self.parent.output_area.append_output(f"执行命令: {' '.join(command)}")
             self.parent.process_handler.process.start(command[0], command[1:])
             self.download_button.setEnabled(False)
+        else:
+            self.download_button.setEnabled(True)
             
     def show_info(self):
         """仅显示信息"""
-        command = self.parent.command_builder.build_command(info_only=True)
+        # 根据模式选择命令构建器
+        if self.parent.mode == "youtube":
+            command = self.parent.youtube_command_builder.build_command(info_only=True)
+        else:
+            command = self.parent.command_builder.build_command(info_only=True)
+            
         if command:
             self.parent.output_area.clear_output()
             self.parent.output_area.append_output(f"执行命令: {' '.join(command)}")
             self.parent.process_handler.process.start(command[0], command[1:])
             self.info_button.setEnabled(False)
+        else:
+            self.info_button.setEnabled(True)
             
     def login_account(self):
         """登录账号"""
+        # YouTube模式下不需要登录
+        if self.parent.mode == "youtube":
+            QMessageBox.information(self.parent, "提示", "YouTube模式下无需登录B站账号")
+            return
+            
         self.parent.output_area.clear_output()
         self.parent.output_area.append_output("执行命令: BBDown login")
         self.parent.process_handler.process.start("BBDown", ["login"])

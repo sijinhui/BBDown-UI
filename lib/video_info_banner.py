@@ -90,10 +90,18 @@ class VideoInfoBanner:
         
     def update_video_info(self, value):
         """更新视频信息显示"""
-        pic = value.get("data", {}).get("pic", "")
-        author = value.get("data", {}).get("owner", {}).get("name", "")
-        title = value.get("data", {}).get("title", "")
-        description = value.get("data", {}).get("desc", "")
+        pic = author = title = description = ""
+        if self.parent.mode == "bilibili":
+            pic = value.get("data", {}).get("pic", "")
+            author = value.get("data", {}).get("owner", {}).get("name", "")
+            title = value.get("data", {}).get("title", "")
+            description = value.get("data", {}).get("desc", "")
+        if self.parent.mode == "youtube":
+            title = value.get("title", "")
+            pic = value.get("thumbnail", "")
+            description = value.get("description", "")
+            author = value.get("uploader", "")
+
         self.video_title_label.setText(f"标题: {title}")
         self.video_author_label.setText(f"作者: {author}")
         # 使用ElidedLabel的setText方法设置文本和tooltip

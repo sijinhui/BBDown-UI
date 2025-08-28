@@ -23,8 +23,12 @@ from lib.video_info_banner import VideoInfoBanner
 from lib.output_area import OutputArea
 # 导入下载选项区域管理类
 from lib.download_options import DownloadOptionsArea
+# 导入YouTube选项区域管理类
+from lib.youtube_options import YouTubeOptionsArea
 # 导入命令构建器
 from lib.command_builder import CommandBuilder
+# 导入YouTube命令构建器
+from lib.youtube_command_builder import YouTubeCommandBuilder
 # 导入URL处理器
 from lib.url_handler import URLHandler
 # 导入执行按钮区域管理类
@@ -110,9 +114,13 @@ class BBDownUI(QMainWindow):
 
         # 初始化下载选项区域管理器
         self.download_options = DownloadOptionsArea(self)
+        # 初始化YouTube选项区域管理器
+        self.youtube_options = YouTubeOptionsArea(self)
 
         # 初始化命令构建器
         self.command_builder = CommandBuilder(self)
+        # 初始化YouTube命令构建器
+        self.youtube_command_builder = YouTubeCommandBuilder(self)
 
         # 初始化URL处理器
         self.url_handler = URLHandler(self)
@@ -140,6 +148,8 @@ class BBDownUI(QMainWindow):
 
         # 创建下载选项区域
         self.download_options.create_download_options_area(left_layout)
+        # 创建YouTube选项区域
+        self.youtube_options.create_youtube_options_area(left_layout)
         left_layout.addStretch()
 
         # 创建输出显示区域（使用QGroupBox包装）
@@ -155,6 +165,8 @@ class BBDownUI(QMainWindow):
         # 设置分割器的初始大小
         work_splitter.setSizes([300, 500])
 
+        # 初始化下载模式
+        self._mode = "bilibili" # "youtube"
         # 初始化二维码弹窗
         self.qr_dialog = None
         # 视频基础信息存储
@@ -170,9 +182,30 @@ class BBDownUI(QMainWindow):
 
         # 加载配置
         self.download_options.load_config(self.config_file)
+        # 加载YouTube配置
+        self.youtube_options.load_config(self.config_file)
 
         # 连接窗口关闭事件
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+
+    @property
+    def mode(self):
+        return self._mode
+    @mode.setter
+    def mode(self, value):
+        """当模式修改时，对应调整布局"""
+        if value == self._mode: return
+        self._mode = value
+        # 根据值调整布局
+        self.update_download_options_layout()
+        
+    def update_download_options_layout(self):
+        """根据模式更新下载选项布局"""
+        # 先隐藏所有下载选项卡
+        if hasattr(self, 'download_options') and self.download_options:
+            self.download_options.options_group.setVisible(self._mode == "bilibili")
+        if hasattr(self, 'youtube_options') and self.youtube_options:
+            self.youtube_options.options_group.setVisible(self._mode == "youtube")
 
     @property
     def base_video_info_json(self):
@@ -188,6 +221,7 @@ class BBDownUI(QMainWindow):
     def closeEvent(self, event):
         """窗口关闭事件，保存配置"""
         self.download_options.save_config(self.config_file)
+        self.youtube_options.save_config(self.config_file)
         event.accept()
 
 
