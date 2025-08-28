@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QScrollArea, QLayout,
 )
+from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt
 from PySide6.QtNetwork import QNetworkAccessManager
 
@@ -41,6 +42,7 @@ class BBDownUI(QMainWindow):
         
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
         self.setGeometry(100, 100, 1200, 600)
+        self.setWindowIcon(QIcon("public/bilibili.svg"))
 
         # 创建中心部件
         central_widget = QWidget()
@@ -189,6 +191,8 @@ class BBDownUI(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+    app.setApplicationName("BBDown")
+    app.setWindowIcon(QIcon("public/bilibili.svg"))
     window = BBDownUI()
     # 检查BBDown路径
     check_bbdown_path(window)
