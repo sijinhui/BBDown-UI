@@ -86,3 +86,8 @@ class URLHandler:
             # 转换新版个人空间合集链接为旧版格式
             converted_url = self.convert_space_url(clipboard_text)
             self.parent.url_input.setText(converted_url)
+            
+            # 将主窗口置于前台并激活
+            self.parent.show()
+            self.parent.raise_()
+            self.parent.activateWindow()
