@@ -47,7 +47,6 @@ jobs:
           --enable-plugin=pyside6 \
           --follow-import-to=lib \
           --include-package-data=pyyaml \
-          --include-data-dir=public=public \
           --show-progress \
           --output-dir=o \
           --assume-yes-for-downloads \
@@ -57,7 +56,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         .venv\Scripts\activate
-        nuitka --onefile --windows-console-mode=disable --windows-icon-from-ico=public\bilibili.ico --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --include-data-dir=public=public --show-progress --output-dir=o --assume-yes-for-downloads main.py
+        nuitka --onefile --windows-console-mode=disable --windows-icon-from-ico=public/bilibili.ico --standalone --enable-plugin=pyside6 --follow-import-to=lib --include-package-data=pyyaml --show-progress --output-dir=o --assume-yes-for-downloads main.py
 
     # 为 release 准备压缩包
     - name: Prepare macOS release archive

@@ -25,6 +25,8 @@
 # 使用uv安装（推荐）
 uv sync
 
+# windows下将图标集成在资源库中，默认已有这个文件了，如需更换图标则需重新生成
+pyside6-rcc .\public\resources.qrc -o .\lib\resource_rc.py 
 ```
 
 ### 运行程序

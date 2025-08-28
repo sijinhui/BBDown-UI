@@ -34,6 +34,8 @@ from lib.process_handler import ProcessHandler
 # 导入检查器
 from lib.checker import check_bbdown_path, setup_system_paths
 
+import lib.resource_rc
+
 class BBDownUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -42,7 +44,7 @@ class BBDownUI(QMainWindow):
         
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
         self.setGeometry(100, 100, 1200, 600)
-        self.setWindowIcon(QIcon("public/bilibili.svg"))
+        self.setWindowIcon(QIcon(":/bilibili.ico"))
 
         # 创建中心部件
         central_widget = QWidget()
@@ -192,7 +194,7 @@ class BBDownUI(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("BBDown")
-    app.setWindowIcon(QIcon("public/bilibili.svg"))
+    app.setWindowIcon(QIcon(":/bilibili.ico"))
     window = BBDownUI()
     # 检查BBDown路径
     check_bbdown_path(window)
