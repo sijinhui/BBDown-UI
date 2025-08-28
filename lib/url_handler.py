@@ -53,35 +53,37 @@ class URLHandler:
             return False
         youtube_patterns = [
             r'https?://(?:www\.)?youtube\.com/watch\?v=[\w-]+',
+            r'https?://(?:www\.)?youtube\.com/shorts/[\w-]+',
         ]
         # 检查是否匹配
         for pattern in youtube_patterns:
             if re.match(pattern, text):
                 return True
         return False
-        
-    def convert_space_url(self, url):
+
+    @staticmethod
+    def convert_space_url(url):
         """将新版个人空间合集链接转换为旧版格式"""
-        # 新版个人空间合集链接格式: 
+        # 新版个人空间合集链接格式:
         # https://space.bilibili.com/392959666/lists/1560264?type=season
         # 旧版个人空间合集链接格式:
         # https://space.bilibili.com/392959666/channel/collectiondetail?sid=1560264
-        
+
         # 匹配新版个人空间合集链接
         new_pattern = r'https://space\.bilibili\.com/(\d+)/lists/(\d+)'
         match = re.match(new_pattern, url)
-        
+
         if match:
             uid = match.group(1)  # 用户ID
             sid = match.group(2)  # 合集ID
-            
+
             # 转换为旧版链接格式
             old_url = f"https://space.bilibili.com/{uid}/channel/collectiondetail?sid={sid}"
             return old_url
-        
+
         # 如果不是新版个人空间合集链接，返回原链接
         return url
-        
+
     def check_clipboard(self):
         """检查剪贴板内容，如果是B站链接则自动填充"""
         clipboard_text = self.clipboard.text()
