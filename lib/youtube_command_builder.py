@@ -72,6 +72,8 @@ class YouTubeCommandBuilder:
         file_pattern = self.parent.youtube_options.file_pattern.text().strip()
         if file_pattern:
             command.extend(["-o", file_pattern])
+        else:
+            command.extend(["-o", self.parent.default_youtube_file_pattern])
             
         # 添加工作目录
         work_dir = self.parent.youtube_options.work_dir.text().strip()

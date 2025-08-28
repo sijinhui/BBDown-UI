@@ -64,7 +64,7 @@ class CommandBuilder:
         if file_pattern:
             command.extend(["-F", file_pattern])
         else:
-            command.extend(["-F", self.parent.default_file_pattern])
+            command.extend(["-F", self.parent.default_bilibili_file_pattern])
             
         multi_file_pattern = self.parent.download_options.multi_file_pattern.text().strip()
         if multi_file_pattern:
