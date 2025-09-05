@@ -29,7 +29,7 @@ class YouTubeCommandBuilder:
         
         # 构建格式字符串
         if format_choice != "默认":
-            format_str = format_choice
+            format_str = f"[ext={format_choice}]"
             if quality_choice != "最佳":
                 # 将画质选项转换为yt-dlp格式
                 quality_map = {
@@ -42,12 +42,12 @@ class YouTubeCommandBuilder:
                 }
                 if quality_choice in quality_map:
                     format_str += f"[height<={quality_map[quality_choice]}]"
-            command.extend(["-f", format_str])
+            command.extend(["-f", f'bestvideo{format_str}+bestaudio/best'])
         
         # 添加音频格式参数
-        audio_format = self.parent.youtube_options.audio_format_combo.currentText()
-        if audio_format != "最佳":
-            command.extend(["--extract-audio", "--audio-format", audio_format])
+        # audio_format = self.parent.youtube_options.audio_format_combo.currentText()
+        # if audio_format != "最佳":
+        #     command.extend(["--extract-audio", "--audio-format", audio_format])
             
         # 添加选项参数
         if self.parent.youtube_options.subtitle_checkbox.isChecked():

@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel, QSize
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtNetwork import QNetworkRequest
 from PySide6.QtGui import QPixmap
-from lib.image_viewer import ImageViewerDialog
+from lib.libs.image_viewer import ImageViewerDialog
 
 
 class ElidedLabel(QLabel):

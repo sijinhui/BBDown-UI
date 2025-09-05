@@ -1,5 +1,4 @@
 import sys
-import os
 import pathlib
 from PySide6.QtWidgets import (
     QApplication,
@@ -7,10 +6,8 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QSizePolicy,
     QSplitter,
     QGroupBox,
-    QFormLayout,
     QScrollArea, QLayout,
 )
 from PySide6.QtGui import QIcon
@@ -18,27 +15,26 @@ from PySide6.QtCore import Qt
 from PySide6.QtNetwork import QNetworkAccessManager
 
 # 导入视频信息横幅相关类
-from lib.video_info_banner import VideoInfoBanner
+from lib.libs.video_info_banner import VideoInfoBanner
 # 导入输出区域管理类
-from lib.output_area import OutputArea
+from lib.libs.output_area import OutputArea
 # 导入下载选项区域管理类
-from lib.download_options import DownloadOptionsArea
+from lib.bilibili.download_options import DownloadOptionsArea
 # 导入YouTube选项区域管理类
-from lib.youtube_options import YouTubeOptionsArea
+from lib.youtube.youtube_options import YouTubeOptionsArea
 # 导入命令构建器
-from lib.command_builder import CommandBuilder
+from lib.bilibili.command_builder import CommandBuilder
 # 导入YouTube命令构建器
-from lib.youtube_command_builder import YouTubeCommandBuilder
+from lib.youtube.youtube_command_builder import YouTubeCommandBuilder
 # 导入URL处理器
-from lib.url_handler import URLHandler
+from lib.libs.url_handler import URLHandler
 # 导入执行按钮区域管理类
-from lib.action_buttons import ActionButtons
+from lib.libs.action_buttons import ActionButtons
 # 导入进程处理器
-from lib.process_handler import ProcessHandler
+from lib.libs.process_handler import ProcessHandler
 # 导入检查器
-from lib.checker import check_bbdown_path, setup_system_paths
+from lib.bilibili.checker import check_bbdown_path, setup_system_paths
 
-import lib.resource_rc
 
 class BBDownUI(QMainWindow):
     def __init__(self):

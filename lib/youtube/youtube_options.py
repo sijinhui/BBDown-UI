@@ -57,7 +57,7 @@ class YouTubeOptionsArea(OptionsBase):
         self.audio_format_combo.addItems(["最佳", "mp3", "aac", "m4a", "opus", "wav", "flac"])
         audio_layout.addWidget(self.audio_format_combo)
         audio_layout.addStretch()
-        options_layout.addLayout(audio_layout)
+        # options_layout.addLayout(audio_layout)
         
         # 下载选项复选框
         checkboxes_layout = QHBoxLayout()

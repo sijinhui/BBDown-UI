@@ -1,6 +1,6 @@
 from pathlib import Path
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QMessageBox
-from .qr_dialog import QRCodeDialog
+from lib.bilibili.qr_dialog import QRCodeDialog
 from PySide6.QtCore import QProcess
 
 

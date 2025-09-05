@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QFileDialog
 from pathlib import Path
 
+
 class OptionsBase(object):
     def browse_directory(self):
         """浏览目录选择"""
@@ -10,6 +11,8 @@ class OptionsBase(object):
         else:
             default_dir = str(Path.home())
 
-        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录", default_dir)
+        directory = QFileDialog.getExistingDirectory(
+            self.parent, "选择工作目录", default_dir
+        )
         if directory:
             self.work_dir.setText(directory)
