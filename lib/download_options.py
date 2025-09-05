@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
     QGroupBox, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton, QLayout
 )
 # from PySide6.QtCore import Qt
-
+from lib.libs.download_dir import downloads_path
 
 class DownloadOptionsArea:
     def __init__(self, parent):
@@ -119,7 +119,14 @@ class DownloadOptionsArea:
     def browse_directory(self):
         """浏览目录选择"""
         from PySide6.QtWidgets import QFileDialog
-        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录")
+        from pathlib import Path
+        current_dir = self.work_dir.text().strip()
+        if current_dir and Path(current_dir).exists() and Path(current_dir).is_dir():
+            default_dir = current_dir
+        else:
+            default_dir = str(Path.home())
+
+        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录", default_dir)
         if directory:
             self.work_dir.setText(directory)
             
@@ -175,11 +182,14 @@ class DownloadOptionsArea:
                     self.multi_file_pattern.setText(config['multi_file_pattern'])
                 
                 # 加载工作目录
-                if 'work_dir' in config:
+                if config.get("work_dir"):
                     self.work_dir.setText(config['work_dir'])
+                else:
+                    # 添加默认工作目录为当前用户的下载文件夹
+                    self.work_dir.setText(str(downloads_path))
 
                 # 程序路径
-                if 'BBDown_PATH' in config:
+                if config.get("BBDown_PATH"):
                     self.BBDown_PATH = config.get("BBDown_PATH", "")
                     
             except Exception as e:
