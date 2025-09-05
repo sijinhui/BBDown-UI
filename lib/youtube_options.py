@@ -3,9 +3,10 @@ import yaml
 from PySide6.QtWidgets import (
     QGroupBox, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton, QLayout
 )
+from lib.libs.download_dir import downloads_path
+from lib.libs.base import OptionsBase
 
-
-class YouTubeOptionsArea:
+class YouTubeOptionsArea(OptionsBase):
     def __init__(self, parent):
         self.options_group = None
         self.parent = parent
@@ -108,13 +109,7 @@ class YouTubeOptionsArea:
 
         options_layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         layout.addWidget(self.options_group)
-        
-    def browse_directory(self):
-        """浏览目录选择"""
-        from PySide6.QtWidgets import QFileDialog
-        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录")
-        if directory:
-            self.work_dir.setText(directory)
+
             
     def load_config(self, config_file):
         """加载配置文件"""
@@ -164,8 +159,10 @@ class YouTubeOptionsArea:
                     self.file_pattern.setText(config['youtube_file_pattern'])
                 
                 # 加载工作目录
-                if 'youtube_work_dir' in config:
+                if config.get("youtube_work_dir"):
                     self.work_dir.setText(config['youtube_work_dir'])
+                else:
+                    self.work_dir.setText(str(downloads_path))
                     
             except Exception as e:
                 print(f"加载配置文件失败: {e}")

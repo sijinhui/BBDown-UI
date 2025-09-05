@@ -5,8 +5,9 @@ from PySide6.QtWidgets import (
 )
 # from PySide6.QtCore import Qt
 from lib.libs.download_dir import downloads_path
+from lib.libs.base import OptionsBase
 
-class DownloadOptionsArea:
+class DownloadOptionsArea(OptionsBase):
     def __init__(self, parent):
         self.BBDown_PATH = ""
         self.parent = parent
@@ -115,20 +116,7 @@ class DownloadOptionsArea:
         # options_layout.addStretch()
         options_layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         layout.addWidget(self.options_group)
-        
-    def browse_directory(self):
-        """浏览目录选择"""
-        from PySide6.QtWidgets import QFileDialog
-        from pathlib import Path
-        current_dir = self.work_dir.text().strip()
-        if current_dir and Path(current_dir).exists() and Path(current_dir).is_dir():
-            default_dir = current_dir
-        else:
-            default_dir = str(Path.home())
 
-        directory = QFileDialog.getExistingDirectory(self.parent, "选择工作目录", default_dir)
-        if directory:
-            self.work_dir.setText(directory)
             
     def load_config(self, config_file):
         """加载配置文件"""
