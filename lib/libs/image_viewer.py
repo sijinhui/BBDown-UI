@@ -2,9 +2,9 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QScrollArea, QLabel, QPushBu
 from PySide6.QtGui import QPixmap, QShortcut, QKeySequence
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
+from .shortcut import ShortcutMixin
 
-
-class ImageViewerDialog(QDialog):
+class ImageViewerDialog(QDialog, ShortcutMixin):
     """图片查看对话框，用于显示原始分辨率的图片"""
 
     def __init__(self, pixmap, parent=None):
@@ -66,12 +66,4 @@ class ImageViewerDialog(QDialog):
         layout.addWidget(close_button)
 
         # 添加快捷键支持 (Command+W on macOS)
-        self.setShortcut()
-
-    def setShortcut(self):
-        """设置快捷键"""
-        try:
-            shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
-            shortcut.activated.connect(self.close)
-        except ImportError:
-            pass  # 如果导入失败则忽略快捷键功能
+        self.setup_shortcuts()

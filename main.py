@@ -35,13 +35,14 @@ from lib.libs.process_handler import ProcessHandler
 # 导入检查器
 from lib.bilibili.checker import check_bbdown_path, setup_system_paths
 
+#
+from lib.libs.shortcut import ShortcutMixin
 
-class BBDownUI(QMainWindow):
+class BBDownUI(QMainWindow, ShortcutMixin):
     def __init__(self):
         super().__init__()
         # 配置系统路径
         setup_system_paths()
-        
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
         self.setGeometry(100, 100, 1200, 800)
         self.setWindowIcon(QIcon(":/bilibili.ico"))
@@ -184,6 +185,9 @@ class BBDownUI(QMainWindow):
 
         # 连接窗口关闭事件
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+
+        # 设置快捷键
+        self.setup_shortcuts()
 
     @property
     def mode(self):
