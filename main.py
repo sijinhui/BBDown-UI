@@ -43,7 +43,7 @@ class BBDownUI(QMainWindow):
         setup_system_paths()
         
         self.setWindowTitle("BBDown UI - 哔哩哔哩下载工具")
-        self.setGeometry(100, 100, 1200, 600)
+        self.setGeometry(100, 100, 1200, 800)
         self.setWindowIcon(QIcon(":/bilibili.ico"))
 
         # 初始化下载模式
