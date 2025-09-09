@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QFileDialog
 from pathlib import Path
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
+from download_dir import downloads_path
 
 class OptionsBase(object):
     def browse_directory(self):
@@ -27,5 +28,4 @@ class OptionsBase(object):
             QDesktopServices.openUrl(QUrl.fromLocalFile(directory))
         else:
             # 如果目录不存在，尝试打开父目录或用户主目录
-            home_dir = os.path.expanduser("~")
-            QDesktopServices.openUrl(QUrl.fromLocalFile(home_dir))
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(downloads_path)))
