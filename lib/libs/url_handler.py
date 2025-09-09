@@ -97,21 +97,21 @@ class URLHandler:
         
         # 检查是否为B站链接或BV号
         if self.is_bilibili_url(clipboard_text):
-            self.parent.mode = "bilibili"
             # 转换新版个人空间合集链接为旧版格式
             converted_url = self.convert_space_url(clipboard_text)
+
+            self.parent.mode = "bilibili"
             self.parent.url_input.setText(converted_url)
-            
-            # 将主窗口置于前台并激活
-            self.parent.show()
-            self.parent.raise_()
-            self.parent.activateWindow()
+            self.activate_windows()
 
         # 检查是否是youtube视频
         if self.is_youtube_url(clipboard_text):
             self.parent.mode = "youtube"
             self.parent.url_input.setText(clipboard_text)
+            self.activate_windows()
 
-            self.parent.show()
-            self.parent.raise_()
-            self.parent.activateWindow()
+
+    def activate_windows(self):
+        self.parent.show()
+        self.parent.raise_()
+        self.parent.activateWindow()
