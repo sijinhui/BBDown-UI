@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QFileDialog
 from pathlib import Path
-
+from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDesktopServices
 
 class OptionsBase(object):
     def browse_directory(self):
@@ -16,3 +17,15 @@ class OptionsBase(object):
         )
         if directory:
             self.work_dir.setText(directory)
+
+    def open_directory(self):
+        """打开工作目录"""
+        directory = self.work_dir.text().strip()
+        p = Path(directory)
+        if directory and p.exists() and p.is_dir():
+            # 使用QDesktopServices打开目录
+            QDesktopServices.openUrl(QUrl.fromLocalFile(directory))
+        else:
+            # 如果目录不存在，尝试打开父目录或用户主目录
+            home_dir = os.path.expanduser("~")
+            QDesktopServices.openUrl(QUrl.fromLocalFile(home_dir))

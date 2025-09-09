@@ -101,7 +101,11 @@ class YouTubeOptionsArea(OptionsBase):
         self.work_dir = QLineEdit()
         self.work_dir.setPlaceholderText("请选择工作目录")
         workdir_layout.addWidget(self.work_dir)
-        
+
+        open_button = QPushButton("打开")
+        open_button.clicked.connect(self.open_directory)
+        workdir_layout.addWidget(open_button)
+
         self.browse_button = QPushButton("浏览")
         self.browse_button.clicked.connect(self.browse_directory)
         workdir_layout.addWidget(self.browse_button)
