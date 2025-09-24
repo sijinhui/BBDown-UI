@@ -37,6 +37,8 @@ from lib.bilibili.checker import check_bbdown_path, setup_system_paths
 
 #
 from lib.libs.shortcut import ShortcutMixin
+# 导入主窗口类
+from lib.bbdown.main_window import BBDownMainWindow
 
 class BBDownUI(QMainWindow, ShortcutMixin):
     def __init__(self):
@@ -154,7 +156,7 @@ class BBDownUI(QMainWindow, ShortcutMixin):
         self.net_manager = QNetworkAccessManager(self)  # 必须保存为成员变量，防止被回收
 
         # 创建下载选项区域
-        self.download_options.create_download_options_area(left_layout)
+        left_layout.addWidget(self.download_options)
         # 创建YouTube选项区域
         self.youtube_options.create_youtube_options_area(left_layout)
         left_layout.addStretch()
@@ -204,7 +206,7 @@ class BBDownUI(QMainWindow, ShortcutMixin):
         """根据模式更新下载选项布局"""
         # 先隐藏所有下载选项卡
         if hasattr(self, 'download_options') and self.download_options:
-            self.download_options.options_group.setVisible(self._mode == "bilibili")
+            self.download_options.setVisible(self._mode == "bilibili")
         if hasattr(self, 'youtube_options') and self.youtube_options:
             self.youtube_options.options_group.setVisible(self._mode == "youtube")
 
@@ -230,9 +232,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("BBDown")
     app.setWindowIcon(QIcon(":/bilibili.ico"))
-    window = BBDownUI()
-    # 检查BBDown路径
-    check_bbdown_path(window)
+    window = BBDownMainWindow()
     window.show()
     sys.exit(app.exec())
 

@@ -11,7 +11,8 @@
       "Bash(python:*)",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(yt-dlp:*)"
+      "Bash(yt-dlp:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

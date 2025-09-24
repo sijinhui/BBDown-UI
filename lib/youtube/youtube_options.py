@@ -5,9 +5,14 @@ from PySide6.QtWidgets import (
 )
 from lib.libs.download_dir import downloads_path
 from lib.libs.base import OptionsBase
+from qfluentwidgets import GroupHeaderCardWidget, SwitchButton, IndicatorPosition, LineEdit, ComboBox, CompactSpinBox
 
-class YouTubeOptionsArea(OptionsBase):
+
+class YouTubeOptionsArea(OptionsBase, GroupHeaderCardWidget):
     def __init__(self, parent):
+        GroupHeaderCardWidget.__init__(self, parent)
+        OptionsBase.__init__(self)
+
         self.options_group = None
         self.parent = parent
         # 初始化所有需要的控件属性

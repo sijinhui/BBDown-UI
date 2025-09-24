@@ -1,16 +1,23 @@
 import os
 import yaml
 from PySide6.QtWidgets import (
-    QGroupBox, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton, QLayout
+    QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QLineEdit, QCheckBox, QPushButton, QLayout
 )
-# from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Qt
+from qfluentwidgets import GroupHeaderCardWidget, SwitchButton, IndicatorPosition, LineEdit, ComboBox, CompactSpinBox
 from lib.libs.download_dir import downloads_path
 from lib.libs.base import OptionsBase
 
-class DownloadOptionsArea(OptionsBase):
+class DownloadOptionsArea(OptionsBase, GroupHeaderCardWidget):
     def __init__(self, parent):
+        GroupHeaderCardWidget.__init__(self, parent)
+        OptionsBase.__init__(self)
+
         self.BBDown_PATH = ""
         self.parent = parent
+        self.setTitle(self.tr("下载选项"))
+
         # 初始化所有需要的控件属性
         self.api_combo = None
         self.encoding_input = None
@@ -29,97 +36,126 @@ class DownloadOptionsArea(OptionsBase):
         self.work_dir = None
         self.browse_button = None
 
-    def create_download_options_area(self, layout):
-        """创建下载选项区域"""
-        self.options_group = QGroupBox("下载选项")
-        # options_group.setFixedHeight(120)
-        options_layout = QVBoxLayout(self.options_group)
-        
+        self._initWidgets()
+
+    def _initWidgets(self):
+        """初始化控件"""
+        self.setBorderRadius(8)
+
         # API模式选择
         api_layout = QHBoxLayout()
         api_layout.addWidget(QLabel("API模式:"))
-        self.api_combo = QComboBox()
+        self.api_combo = ComboBox()
         self.api_combo.addItems(["默认", "TV端", "APP端", "国际版"])
         api_layout.addWidget(self.api_combo)
         api_layout.addStretch()
-        options_layout.addLayout(api_layout)
-        
+        api_widget = QWidget()
+        api_widget.setLayout(api_layout)
+        self.addGroup(":/bilibili.ico", "API设置", "选择API模式", api_widget)
+
         # 编码和画质优先级
         quality_layout = QHBoxLayout()
         quality_layout.addWidget(QLabel("编码优先级:"))
-        self.encoding_input = QLineEdit()
+        self.encoding_input = LineEdit()
         self.encoding_input.setPlaceholderText("hevc,av1,avc")
         quality_layout.addWidget(self.encoding_input)
-        
+
         quality_layout.addWidget(QLabel("画质优先级:"))
-        self.dfn_input = QLineEdit()
+        self.dfn_input = LineEdit()
         self.dfn_input.setPlaceholderText("8K 超高清, 1080P 高码率, HDR 真彩, 杜比视界")
         quality_layout.addWidget(self.dfn_input)
-        options_layout.addLayout(quality_layout)
-        
-        # 下载选项复选框
-        checkboxes_layout = QHBoxLayout()
-        
-        self.use_aria2 = QCheckBox("使用aria2c下载")
-        self.interactive = QCheckBox("交互式选择清晰度")
-        self.download_danmaku = QCheckBox("下载弹幕")
-        self.video_only = QCheckBox("仅下载视频")
-        self.audio_only = QCheckBox("仅下载音频")
-        
-        checkboxes_layout.addWidget(self.use_aria2)
-        checkboxes_layout.addWidget(self.interactive)
-        checkboxes_layout.addWidget(self.download_danmaku)
-        checkboxes_layout.addWidget(self.video_only)
-        checkboxes_layout.addWidget(self.audio_only)
-        options_layout.addLayout(checkboxes_layout)
-        
-        # 更多选项复选框
-        more_checkboxes_layout = QHBoxLayout()
-        
-        self.skip_subtitle = QCheckBox("跳过字幕下载")
-        self.skip_cover = QCheckBox("跳过封面下载")
-        self.debug = QCheckBox("输出调试日志")
+        quality_widget = QWidget()
+        quality_widget.setLayout(quality_layout)
+        self.addGroup(":/bilibili.ico", "画质设置", "设置编码和画质优先级", quality_widget)
+
+        # 下载选项开关
+        self.use_aria2 = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.use_aria2.setOnText(self.tr("On"))
+        self.use_aria2.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "使用aria2c下载", "启用aria2c多线程下载", self.use_aria2)
+
+        self.interactive = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.interactive.setOnText(self.tr("On"))
+        self.interactive.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "交互式选择", "交互式选择清晰度", self.interactive)
+
+        self.download_danmaku = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.download_danmaku.setOnText(self.tr("On"))
+        self.download_danmaku.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "下载弹幕", "下载视频弹幕", self.download_danmaku)
+
+        self.video_only = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.video_only.setOnText(self.tr("On"))
+        self.video_only.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "仅下载视频", "只下载视频流", self.video_only)
+
+        self.audio_only = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.audio_only.setOnText(self.tr("On"))
+        self.audio_only.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "仅下载音频", "只下载音频流", self.audio_only)
+
+        # 更多选项开关
+        self.skip_subtitle = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.skip_subtitle.setOnText(self.tr("On"))
+        self.skip_subtitle.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "跳过字幕", "跳过字幕下载", self.skip_subtitle)
+
+        self.skip_cover = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.skip_cover.setOnText(self.tr("On"))
+        self.skip_cover.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "跳过封面", "跳过封面下载", self.skip_cover)
+
+        self.debug = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.debug.setOnText(self.tr("On"))
+        self.debug.setOffText(self.tr("Off"))
         self.debug.setChecked(True)
-        self.show_all = QCheckBox("显示所有分P")
-        
-        more_checkboxes_layout.addWidget(self.skip_subtitle)
-        more_checkboxes_layout.addWidget(self.skip_cover)
-        more_checkboxes_layout.addWidget(self.debug)
-        more_checkboxes_layout.addWidget(self.show_all)
-        options_layout.addLayout(more_checkboxes_layout)
-        
+        self.addGroup(":/bilibili.ico", "调试日志", "输出调试日志", self.debug)
+
+        self.show_all = SwitchButton(self.tr("Off"), self, IndicatorPosition.RIGHT)
+        self.show_all.setOnText(self.tr("On"))
+        self.show_all.setOffText(self.tr("Off"))
+        self.addGroup(":/bilibili.ico", "显示所有分P", "显示所有分P视频", self.show_all)
+
         # 文件命名模式
         file_pattern_layout = QHBoxLayout()
         file_pattern_layout.addWidget(QLabel("单P文件命名:"))
-        self.file_pattern = QLineEdit()
+        self.file_pattern = LineEdit()
         self.file_pattern.setPlaceholderText("<ownerName>/<ownerName>-<videoTitle>-<bvid>")
         file_pattern_layout.addWidget(self.file_pattern)
-        
-        file_pattern_layout.addWidget(QLabel("多P文件命名:"))
-        self.multi_file_pattern = QLineEdit()
+        file_pattern_widget = QWidget()
+        file_pattern_widget.setLayout(file_pattern_layout)
+        self.addGroup(":/bilibili.ico", "单P文件命名", "设置单P视频文件命名规则", file_pattern_widget)
+
+        file_pattern_layout2 = QHBoxLayout()
+        file_pattern_layout2.addWidget(QLabel("多P文件命名:"))
+        self.multi_file_pattern = LineEdit()
         self.multi_file_pattern.setPlaceholderText(self.parent.default_bilibili_file_pattern)
-        file_pattern_layout.addWidget(self.multi_file_pattern)
-        options_layout.addLayout(file_pattern_layout)
-        
+        file_pattern_layout2.addWidget(self.multi_file_pattern)
+        file_pattern_widget2 = QWidget()
+        file_pattern_widget2.setLayout(file_pattern_layout2)
+        self.addGroup(":/bilibili.ico", "多P文件命名", "设置多P视频文件命名规则", file_pattern_widget2)
+
         # 工作目录选择
         workdir_layout = QHBoxLayout()
         workdir_layout.addWidget(QLabel("工作目录:"))
-        self.work_dir = QLineEdit()
+        self.work_dir = LineEdit()
         self.work_dir.setPlaceholderText("请选择工作目录")
         workdir_layout.addWidget(self.work_dir)
-        
+
         open_button = QPushButton("打开")
         open_button.clicked.connect(self.open_directory)
         workdir_layout.addWidget(open_button)
-        
+
         self.browse_button = QPushButton("浏览")
         self.browse_button.clicked.connect(self.browse_directory)
         workdir_layout.addWidget(self.browse_button)
-        options_layout.addLayout(workdir_layout)
+        workdir_widget = QWidget()
+        workdir_widget.setLayout(workdir_layout)
+        self.addGroup(":/bilibili.ico", "工作目录", "设置下载工作目录", workdir_widget)
 
-        # options_layout.addStretch()
-        options_layout.setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
-        layout.addWidget(self.options_group)
+    def create_download_options_area(self, layout):
+        """创建下载选项区域"""
+        layout.addWidget(self)
 
             
     def load_config(self, config_file):
